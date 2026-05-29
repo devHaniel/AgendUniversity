@@ -1,0 +1,11 @@
+﻿@using System.Security.Claims
+@{
+    ViewData["Title"] = "Home Page";
+
+    var email = User.FindFirst(ClaimTypes.Email)?.Value;
+    var nomalize = email?.Split('@')[0];
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome, @nomalize!</h1>
+</div>

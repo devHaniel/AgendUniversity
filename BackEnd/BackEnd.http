@@ -1,0 +1,10 @@
+@BackEnd_HostAddress = http://localhost:5256
+
+POST {{BackEnd_HostAddress}}/api/auth/login
+Accept: application/json
+Content-Type: application/json
+{
+    "username": "admin",
+    "password": "admin"
+}
+###

@@ -1,0 +1,38 @@
+# Build output
+**/bin/
+**/obj/
+
+# VS Code and Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+packages/
+
+# ASP.NET Core secret and configuration files
+appsettings.json
+appsettings.Development.json
+appsettings.*.json
+
+# Environment and local secrets
+*.env
+.env.*
+
+# Database files
+*.mdf
+*.ldf
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
