@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FrontEnd.Controllers;
 
-[Authorize]
 public class HomeController : Controller
 {
     public IActionResult Index()

@@ -1,11 +1,102 @@
-﻿@using System.Security.Claims
-@{
-    ViewData["Title"] = "Home Page";
-
-    var email = User.FindFirst(ClaimTypes.Email)?.Value;
-    var nomalize = email?.Split('@')[0];
+﻿@{
+    ViewData["Title"] = "AgendUniversity";
+    Layout = "~/Views/Auth/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome, @nomalize!</h1>
-</div>
+<section class="landing-hero">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <span class="badge bg-primary-subtle text-primary mb-3">
+                Gestor académico universitario
+            </span>
+
+            <h1 class="hero-title">
+                Organiza tu vida académica en un solo lugar
+            </h1>
+
+            <p class="hero-text">
+                AgendUniversity te ayuda a registrar tus periodos, asignaturas y tareas
+                para mantener un historial claro de tu carrera universitaria.
+            </p>
+
+            <div class="d-flex gap-3 mt-4">
+                <a asp-controller="Auth" asp-action="Register" class="btn btn-primary btn-lg px-4">
+                    Comenzar
+                </a>
+
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-primary btn-lg px-4">
+                    Iniciar sesión
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="hero-card">
+                <div class="app-window">
+                    <div class="window-header">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="window-body">
+                        <div class="mini-sidebar">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+
+                        <div class="mini-content">
+                            <h5>Mi semestre actual</h5>
+
+                            <div class="subject-card">
+                                <strong>Programación II</strong>
+                                <small>3 tareas pendientes</small>
+                            </div>
+
+                            <div class="subject-card">
+                                <strong>Álgebra</strong>
+                                <small>1 entrega próxima</small>
+                            </div>
+
+                            <div class="progress-box">
+                                <span>Progreso académico</span>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h5>Periodos académicos</h5>
+                <p>Guarda semestres o ciclos para saber qué cursaste en cada etapa.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">📘</div>
+                <h5>Asignaturas</h5>
+                <p>Registra materias, profesores e información importante de cada clase.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h5>Tareas y entregas</h5>
+                <p>Asocia tareas a tus asignaturas y mantén el control de tus pendientes.</p>
+            </div>
+        </div>
+    </div>
+</section>

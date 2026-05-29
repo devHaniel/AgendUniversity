@@ -62,7 +62,7 @@ public class AuthController : Controller
 
         TokenHelper.GuardarToken(HttpContext, response.Token);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Dashboard");
     }
 
     public IActionResult Register()
@@ -102,7 +102,7 @@ public class AuthController : Controller
 
         TokenHelper.GuardarToken(HttpContext, response.Token);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Dashboard");
     }
 
     public async Task<IActionResult> Logout()

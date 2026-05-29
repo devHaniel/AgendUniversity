@@ -1,3 +1,39 @@
+body {
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    background:
+
+        /* Esquina superior izquierda */
+        radial-gradient(
+            ellipse 1000px 700px at -15% -10%,
+            rgba(13, 110, 253, 0.22),
+            transparent 75%
+        ),
+
+        /* Mancha principal central */
+        radial-gradient(
+            ellipse 900px 700px at 55% 40%,
+            rgba(13, 110, 253, 0.14),
+            transparent 75%
+        ),
+
+        /* Refuerzo inferior derecho */
+        radial-gradient(
+            ellipse 700px 500px at 100% 100%,
+            rgba(13, 110, 253, 0.08),
+            transparent 75%
+        ),
+
+        linear-gradient(
+            135deg,
+            #f8fbff 0%,
+            #eef5ff 100%
+        );
+
+    color: var(--text-dark);
+}
+
 html {
   font-size: 14px;
 }

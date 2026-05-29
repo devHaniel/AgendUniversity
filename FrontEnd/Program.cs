@@ -25,6 +25,7 @@ builder.Services.AddHttpClient("BackEndApi", client =>
 
 builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 builder.Services.AddScoped<IPeriodoService, PeriodoService>();
+builder.Services.AddScoped<IAsignaturasService, AsignaturasService>();
 
 var app = builder.Build();
 
