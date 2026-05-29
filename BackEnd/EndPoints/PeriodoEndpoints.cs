@@ -8,7 +8,7 @@ namespace BackEnd.EndPoints
     {
         public static RouteGroupBuilder MapPeriodoEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/periodos").RequireAuthorization();;
+            var group = app.MapGroup("/api/periodos").RequireAuthorization();
 
             group.MapGet("/", async (IPeriodoService service) =>
             {

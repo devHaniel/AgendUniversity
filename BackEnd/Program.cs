@@ -9,6 +9,7 @@ using BackEnd.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("todos", policy =>
     {
-        policy.WithOrigins("http://localhost:5256", "https://localhost:5256")
+        policy.WithOrigins("http://localhost:5256", "https://localhost:5256",
+                          "http://localhost:5263", "https://localhost:7119")
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -113,6 +115,7 @@ app.MapUsuarioEndpoints();
 app.MapPeriodoEndpoints();
 app.MapAsignaturaEndpoints();
 app.MapTareaEndpoints();
+app.MapScalarApiReference();
 
 
 
