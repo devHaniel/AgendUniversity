@@ -1,0 +1,72 @@
+@model List<Periodo>
+@{
+    ViewData["Title"] = "Periodos";
+}
+
+<h1>Periodos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Crear Nuevo Periodo</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var periodo in Model)
+        {
+            <tr>
+                <td>@periodo.Nombre</td>
+                <td>@periodo.FechaInicio.ToShortDateString()</td>
+                <td>@periodo.FechaFin.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@periodo.Id" class="btn btn-warning btn-sm">Editar</a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@periodo.Id" data-nombre="@periodo.Nombre">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar el período <strong id="periodoNombre"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const periodoId = button.getAttribute('data-id');
+            const periodoNombre = button.getAttribute('data-nombre');
+            
+            document.getElementById('periodoNombre').textContent = periodoNombre;
+            
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = '@Url.Action("Delete", "Periodos")/' + periodoId;
+        });
+    </script>
+}

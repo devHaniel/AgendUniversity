@@ -1,0 +1,43 @@
+@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1>Dashboard</h1>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-calendar-event"></i>
+        Periodo Actual
+    </div>
+    <div class="card-body">
+        @if (Model.Periodo != null)
+        {
+            <h5>@Model.Periodo.Nombre</h5>
+            <p>Fecha Inicio: @Model.Periodo.FechaInicio.ToShortDateString()</p>
+            <p>Fecha Fin: @Model.Periodo.FechaFin.ToShortDateString()</p>
+        }
+        else
+        {
+            <p>No hay un periodo activo actualmente.</p>
+        }
+    </div>
+</div>
+
+<div class="row">
+    @foreach( var asignatura in Model.Asignaturas)
+    {
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="bi bi-book"></i>
+                    @asignatura.Nombre
+                </div>
+                <div class="card-body">
+                    <p><strong>Tareas:</strong> @asignatura.Tareas.Count()</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

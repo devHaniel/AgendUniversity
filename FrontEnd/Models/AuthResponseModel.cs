@@ -14,6 +14,6 @@ namespace FrontEnd.Models
     {
         public int Id { get; set; }
         public string Email { get; set; }
-        // Periodos omitted: add if needed for views
+        public List<Periodo> Periodos { get; set; } = new();
     }
 }

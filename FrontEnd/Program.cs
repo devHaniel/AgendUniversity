@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -23,6 +24,7 @@ builder.Services.AddHttpClient("BackEndApi", client =>
 
 
 builder.Services.AddScoped<IAuthApiService, AuthApiService>();
+builder.Services.AddScoped<IPeriodoService, PeriodoService>();
 
 var app = builder.Build();
 
