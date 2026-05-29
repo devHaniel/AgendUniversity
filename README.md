@@ -1,5 +1,7 @@
 # AgendUniversity
 
+<img width="1905" height="969" alt="Captura desde 2026-05-29 01-35-34" src="https://github.com/user-attachments/assets/973dfceb-ad0e-4f81-9107-d51a98eb0d03" />
+
 ## 1. ¿Qué es AgendUniversity?
 
 AgendUniversity es una aplicación simple diseñada para estudiantes universitarios que necesitan registrar y organizar su vida académica. Su propósito es resolver el problema de la falta de control sobre los periodos cursados, las asignaturas tomadas y las tareas realizadas durante la carrera.
