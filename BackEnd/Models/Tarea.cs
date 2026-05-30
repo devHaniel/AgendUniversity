@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Models
 {
@@ -13,6 +14,12 @@ namespace BackEnd.Models
         [StringLength(maximumLength: 500)]
         public string Descripcion { get; set; }
         public int Estado { get; set; } = 1;
+        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        [Required]
+        public DateTime FechaEntrega { get; set; }
+
+        [Required]
+        public decimal Calificacion { get; set; }
         public Asignatura Asignatura { get; set; }
 
     }

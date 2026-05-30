@@ -34,6 +34,8 @@ namespace FrontEnd.Controllers
             AsignaturaViewModel modelo;
             var userId = int.Parse(User.Claims
         .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
+            
+            ViewBag.Todos = todos;
 
             // mandaron a llamar un periodo específico
             if (periodoId != 0)
@@ -140,7 +142,7 @@ namespace FrontEnd.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(AsignaturaCreateDto model)
+        public async Task<IActionResult> Create(AsignaturaCreateDto model, string returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
@@ -148,12 +150,19 @@ namespace FrontEnd.Controllers
             }
 
             // Aquí iría la lógica para crear la asignatura usando el servicio
-            // await _asignaturasService.CreateAsignaturaAsync(...);
+            // await _asignaturasService.CreateAsignaturaAsync(...);\n            var result = await _asignaturasService.CreateAsignaturaAsync(model);
             var result = await _asignaturasService.CreateAsignaturaAsync(model);
-
+            
             if (result is not null)
             {
                 TempData["Mensaje"] = "Asignatura creada exitosamente";
+                
+                // Si viene de una URL de retorno, redirigir allá
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+                
                 return RedirectToAction("Index");
             }
 

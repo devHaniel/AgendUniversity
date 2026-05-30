@@ -1,0 +1,181 @@
+@model AsignaturaViewModel
+@using FrontEnd.Enums
+
+@{
+    ViewData["Title"] = "Detalles de Periodo";
+
+    string ClaseEstado(string estado) => estado switch
+    {
+        "En curso" => "text-bg-success",
+        "Finalizado" => "text-bg-danger",
+        "No iniciado" => "text-bg-warning text-dark",
+        _ => "text-bg-secondary"
+    };
+
+    bool todasAprobadas = Model.Asignaturas.Any() && Model.Asignaturas.All(a => a.Estado == (int)AsignaturaEnum.Aprobada);
+    bool hayReprobadas = Model.Asignaturas.Any(a => a.Estado == (int)AsignaturaEnum.Reprobada);
+
+    string claseTarjeta = todasAprobadas ? "border-success bg-success bg-opacity-10" :
+                              hayReprobadas ? "border-danger bg-danger bg-opacity-10" :
+                              "border-info bg-info bg-opacity-10";
+
+    string colorBadge = todasAprobadas ? "text-bg-success" :
+                            hayReprobadas ? "text-bg-danger" :
+                            "text-bg-info";
+
+    string mensajeEstado = todasAprobadas ? "✓ Todas aprobadas" :
+                               hayReprobadas ? "⚠ Requiere atención" :
+                               "En progreso";
+
+}
+
+<h1>Detalles de Periodo</h1>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-calendar-event me-2"></i>
+                        <span>@Model.Periodo.Nombre</span>
+                    </div>
+                    <div>
+                        <span class="badge @ClaseEstado(Model.Periodo.EstadoPeriodo)">
+                            @Model.Periodo.EstadoPeriodo
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5>@Model.Periodo.Nombre</h5>
+                <p>Fecha Inicio: @Model.Periodo.FechaInicio.ToShortDateString()</p>
+                <p>Fecha Fin: @Model.Periodo.FechaFin.ToShortDateString()</p>
+            </div>
+            <div class="card-footer text-body-secondary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@Model.Periodo.Id" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil"></i>
+                            Editar
+                        </a>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#deleteModal" data-id="@Model.Periodo.Id"
+                                data-nombre="@Model.Periodo.Nombre">
+                            <i class="bi bi-trash"></i>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                              
+    @*Esta sección será de información relevante*@
+    <div class="col-md-6">
+        <div class="card mb-4 @claseTarjeta border-2">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-file-earmark-check me-2"></i>
+                        <span>Estado académico</span>
+                    </div>
+                    <div>
+                        <span class="badge @colorBadge">
+                            @mensajeEstado
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (todasAprobadas && Model.Asignaturas.Any())
+                {
+                    <h5 class="text-success">¡Excelente!</h5>
+                    <p class="mb-0">Todas tus asignaturas en este período están <strong>aprobadas</strong>.</p>
+                    <p>De parte de AgenUniversity ¡festejamos tu exitoso periodo! </p>
+                }
+                else if (hayReprobadas)
+                {
+                    <h5 class="text-danger">Atención requerida</h5>
+                    <p class="mb-1">Tienes <strong>@Model.Asignaturas.Count(a => a.Estado == (int)AsignaturaEnum.Reprobada)
+                        asignatura(s) reprobada(s)</strong>.</p>
+                        <p class="mb-0 text-muted small">Considera revisar el material o solicitar ayuda académica.</p>
+                    <p>De parte de AgenUniversity Una nota no define a una persona, ¡su constancia y esfuerzo si!</p>
+
+                    }
+                else if (Model.Asignaturas.Any())
+                    {
+                        <h5 class="text-info">En progreso</h5>
+                        <p class="mb-0">Tienes <strong>@Model.Asignaturas.Count(a => a.Estado == (int)AsignaturaEnum.Cursando)
+                            asignatura(s)</strong> en curso.</p>
+                        }
+                else
+                        {
+                            <p class="mb-0 text-muted">No hay asignaturas registradas en este período.</p>
+                            <p class="mb-0 text-muted">Manten el espíritu de aprendizaje y sigue adelante.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-book"></i>
+                    Asignaturas en este período
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                    <a asp-controller="Asignaturas" 
+                       asp-action="Create" 
+                       asp-route-returnUrl="@Url.Action("Details", "Periodos", new { id = Model.Periodo.Id })"
+                       class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus"></i>
+                        Nueva
+                    </a>
+                    <span class="badge text-bg-primary">
+                        N° @Model.Asignaturas.Count
+                    </span>
+                </div>
+            </div>
+
+            <partial name="_TablaAsignaturas" model="@Model" />
+        </div>
+
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas eliminar el período <strong id="periodoNombre"></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form id="deleteForm" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        @section Scripts {
+            <script>
+                const deleteModal = document.getElementById('deleteModal');
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const periodoId = button.getAttribute('data-id');
+                    const periodoNombre = button.getAttribute('data-nombre');
+
+                    document.getElementById('periodoNombre').textContent = periodoNombre;
+
+                    const deleteForm = document.getElementById('deleteForm');
+                    deleteForm.action = '@Url.Action("Delete", "Periodos")/' + periodoId;
+                });
+            </script>
+        }

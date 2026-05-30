@@ -17,6 +17,10 @@
 
     <div class="card-body">
         <form asp-action="Create" method="post">
+            @{
+                var returnUrl = Context.Request.Query["returnUrl"].ToString();
+            }
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
 
             <div class="mb-3">
                 <label asp-for="Nombre" class="form-label">Nombre de la asignatura</label>

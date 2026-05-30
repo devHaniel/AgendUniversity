@@ -1,0 +1,108 @@
+@using FrontEnd.Enums
+@model AsignaturaViewModel
+
+@{
+    string ClaseEstado(int estado) => estado switch
+    {
+        (int)AsignaturaEnum.Aprobada => "text-bg-success",
+        (int)AsignaturaEnum.Reprobada => "text-bg-danger",
+        (int)AsignaturaEnum.Cursando => "text-bg-warning text-dark",
+        _ => "text-bg-secondary"
+    };
+
+    string ObtenerNombrePeriodo(int periodoId)
+    {
+        return Model.Periodos?.FirstOrDefault(p => p.Id == periodoId)?.Nombre ?? "Sin período";
+    }
+}
+
+<div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Asignatura</th>
+                    <th>Estado</th>
+                    <th>Tareas</th>
+                    <th>Periodo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Asignaturas.Any())
+                {
+                    @foreach (var asignatura in Model.Asignaturas)
+                    {
+                        <tr>
+                            <td><a class="link-opacity-100" asp-controller="Asignaturas" asp-action="Details" asp-route-asignaturaId="@asignatura.Id">@asignatura.Nombre</a></td>
+                            <td><span class="badge @ClaseEstado(asignatura.Estado)">@(((AsignaturaEnum)asignatura.Estado).ToString())</span></td>
+                            <td>@asignatura.Tareas.Count()</td>
+                            <td>@ObtenerNombrePeriodo(asignatura.PeriodoId)</td>
+                            <td>
+                                <a asp-controller="Asignaturas"
+                                   asp-action="Edit"
+                                   asp-route-id="@asignatura.Id"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil"></i>
+                                    Editar
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm"
+                                        data-id="@asignatura.Id" data-nombre="@asignatura.Nombre"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash"></i>
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            No hay asignaturas registradas.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar la asignatura <strong id="asignaturaNombre"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const asignaturaId = button.getAttribute('data-id');
+            const asignaturaNombre = button.getAttribute('data-nombre');
+
+            document.getElementById('asignaturaNombre').textContent = asignaturaNombre;
+
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = '@Url.Action("Delete", "Asignaturas")/' + asignaturaId;
+        });
+    }
+</script>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BackEnd.Dtos;
+using FrontEnd.Models;
 using FrontEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -101,7 +102,29 @@ namespace FrontEnd.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var periodo = await _periodoService.GetPeriodoByIdAsync(id);
+            if (periodo == null)
+            {
+                return NotFound();
+            }
 
+            var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var periodos = await _periodoService.GetPeriodosByUsuarioIdAsync(userId);
+
+            var modelo = new AsignaturaViewModel
+            {
+                Periodo = periodo,
+                Asignaturas = periodo.Asignaturas ?? new List<Asignatura>(),
+                Periodos = periodos
+            };
+
+            // Pasar el controlador actual al ViewBag para que sepa que viene de Periodos
+            ViewBag.SourceController = "Periodos";
+
+            return View(modelo);
+        }
 
     }
 }
