@@ -31,6 +31,15 @@ namespace BackEnd.Service
             return mapper.Map<List<AsignaturaDto>>(asignaturas);
         }
 
+        public async Task<List<AsignaturaDto>> GetAsignaturasByUsuarioIdAsync(int usuarioId)
+        {
+            if (usuarioId <= 0)
+                return new List<AsignaturaDto>();
+
+            var asignaturas = await repository.GetAsignaturasByUsuarioIdAsync(usuarioId);
+            return mapper.Map<List<AsignaturaDto>>(asignaturas);
+        }
+
         public async Task<AsignaturaDto> GetAsignaturaByIdAsync(int id)
         {
             if (id <= 0)

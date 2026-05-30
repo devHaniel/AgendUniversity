@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Controllers
 {
+    [Authorize]
     public class PeriodosController : Controller
     {
         private readonly ILogger<PeriodosController> _logger;
@@ -29,8 +30,8 @@ namespace FrontEnd.Controllers
             var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
             _logger.LogInformation($"Obteniendo periodos para usuario ID: {userId}");
             var periodos = await _periodoService.GetPeriodosByUsuarioIdAsync(userId);
-
-            return View(periodos);
+            var ordenados = periodos.OrderByDescending(p => p.FechaInicio).ToList();
+            return View(ordenados);
         }
 
         public IActionResult Create()
@@ -50,6 +51,7 @@ namespace FrontEnd.Controllers
             dto.UsuarioId = userId;
 
             await _periodoService.CreatePeriodoAsync(dto);
+            TempData["Mensaje"] = "Periodo creado exitosamente";
             return RedirectToAction(nameof(Index));
         }
 

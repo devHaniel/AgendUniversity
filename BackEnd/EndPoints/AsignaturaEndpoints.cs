@@ -22,6 +22,12 @@ namespace BackEnd.EndPoints
                 return asignatura is null ? Results.NotFound() : Results.Ok(asignatura);
             });
 
+            group.MapGet("/usuario/{usuarioId:int}", async (int usuarioId, IAsignaturaService service) =>
+            {
+                var asignaturas = await service.GetAsignaturasByUsuarioIdAsync(usuarioId);
+                return Results.Ok(asignaturas);
+            });
+
             group.MapGet("/periodo/{periodoId:int}", async (int periodoId, IAsignaturaService service) =>
             {
                 var asignaturas = await service.GetAsignaturasByPeriodoIdAsync(periodoId);

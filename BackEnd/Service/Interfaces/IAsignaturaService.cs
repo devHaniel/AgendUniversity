@@ -7,6 +7,7 @@ namespace BackEnd.Service.Interfaces
     public interface IAsignaturaService
     {
         Task<List<AsignaturaDto>> GetAsignaturasAsync();
+        Task<List<AsignaturaDto>> GetAsignaturasByUsuarioIdAsync(int usuarioId);
         Task<AsignaturaDto> GetAsignaturaByIdAsync(int id);
         Task<List<AsignaturaDto>> GetAsignaturasByPeriodoIdAsync(int periodoId);
         Task<AsignaturaDto> CreateAsync(AsignaturaCreateDto dto);

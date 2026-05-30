@@ -1,0 +1,182 @@
+@using FrontEnd.Enums
+@model AsignaturaViewModel
+
+@{
+    ViewData["Title"] = "Asignaturas";
+
+    Periodo obtenerPeriodo(int periodoId) 
+    {
+        return Model.Periodos.FirstOrDefault(p => p.Id == periodoId);
+    }
+
+    string ClaseEstado(int estado) => estado switch
+    {
+        (int)AsignaturaEnum.Aprobada => "text-bg-success",
+        (int)AsignaturaEnum.Reprobada => "text-bg-danger",
+        (int)AsignaturaEnum.Cursando => "text-bg-warning text-dark",
+        _ => "text-bg-secondary"
+    };
+}
+
+<h1>Asignaturas</h1>
+
+<hr />
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <a asp-action="Index" class="btn btn-primary">
+            Periodo actual
+        </a>
+        <a asp-action="Create" class="btn btn-primary">
+            Nueva Asignatura
+        </a>
+
+        <a asp-action="Index"
+           asp-route-todos="true"
+           class="btn btn-outline-secondary">
+            Ver todas
+        </a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-calendar-event"></i>
+
+        @if (Model.Periodo != null)
+        {
+            <span>Periodo Seleccionado</span>
+        }
+        else
+        {
+            <span>Todas las asignaturas</span>
+        }
+    </div>
+
+    <div class="card-body">
+        @if (Model.Periodo != null)
+        {
+            <h5>@Model.Periodo.Nombre</h5>
+            <p class="mb-1">
+                <strong>Fecha Inicio:</strong>
+                @Model.Periodo.FechaInicio.ToShortDateString()
+            </p>
+            <p class="mb-0">
+                <strong>Fecha Fin:</strong>
+                @Model.Periodo.FechaFin.ToShortDateString()
+            </p>
+        }
+        else
+        {
+            <p class="mb-0">
+                Estás viendo las asignaturas de todos los períodos.
+            </p>
+        }
+    </div>
+</div>
+
+<div class="card">
+
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <i class="bi bi-book"></i>
+            Listado de Asignaturas
+        </div>
+
+        <div>
+            <span class="badge text-bg-primary">
+                N° @Model.TotalAsignaturas
+            </span>
+        </div>
+    </div>
+    
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Asignatura</th>
+                    <th>Estado</th>
+                    <th>Tareas</th>
+                    <th>Periodo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Asignaturas.Any())
+                {
+                    @foreach (var asignatura in Model.Asignaturas)
+                    {
+                        <tr>
+                            <td><a class="link-opacity-100" asp-action="Details" asp-route-asignaturaId="@asignatura.Id">@asignatura.Nombre</a></td>
+                            <td><span class="badge @ClaseEstado(asignatura.Estado)">@(((AsignaturaEnum)asignatura.Estado).ToString())</span></td>
+                            <td>@asignatura.Tareas.Count()</td>
+                            <td>@obtenerPeriodo(asignatura.PeriodoId).Nombre</td>
+                            <td>
+                                <a asp-action="Edit"
+                                   asp-route-id="@asignatura.Id"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil"></i>
+                                    Editar
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm"
+                                        data-id="@asignatura.Id" data-nombre="@asignatura.Nombre"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash"></i>
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            No hay asignaturas registradas.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar está asignatura <strong id="asignaturaNombre"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" >Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const asignaturaId = button.getAttribute('data-id');
+            const asignaturaNombre = button.getAttribute('data-nombre');
+
+            document.getElementById('asignaturaNombre').textContent = asignaturaNombre;
+
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = '@Url.Action("Delete", "Asignaturas")/' + asignaturaId;
+        });
+    </script>
+}

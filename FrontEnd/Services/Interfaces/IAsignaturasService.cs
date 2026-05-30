@@ -2,13 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BackEnd.Dtos;
+using FrontEnd.Models;
 
 namespace FrontEnd.Services.Interfaces
 {
     public interface IAsignaturasService
     {
-        Task<List<FrontEnd.Models.Asignatura>> GetAsignaturasByUsuarioIdAsync(int usuarioId);
-        Task<FrontEnd.Models.Asignatura> GetAsignaturaByIdAsync(int id);
-        Task<List<FrontEnd.Models.Asignatura>> GetAsignaturasByPeriodoIdAsync(int periodoId);
+        Task<List<Asignatura>> GetAsignaturasByUsuarioIdAsync(int usuarioId);
+        Task<Asignatura> GetAsignaturaByIdAsync(int id);
+        Task<Asignatura> CreateAsignaturaAsync(AsignaturaCreateDto dto);
+        Task<bool> DeleteAsignaturaAsync(int id);
+        Task<bool> UpdateAsignaturaAsync(int id, AsignaturaUpdateDto dto);
     }
 }

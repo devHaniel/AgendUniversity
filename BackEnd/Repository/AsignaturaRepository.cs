@@ -33,6 +33,15 @@ namespace BackEnd.Repository
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
+        public async Task<List<Asignatura>> GetAsignaturasByUsuarioIdAsync(int usuarioId)
+        {
+            return await context.Asignaturas
+                .Where(a => a.Periodo.UsuarioId == usuarioId)
+                .Include(a => a.Tareas)
+                .Include(a => a.Periodo)
+                .ToListAsync();
+        } 
+
         public async Task<List<Asignatura>> GetAsignaturasByPeriodoIdAsync(int periodoId)
         {
             return await context.Asignaturas

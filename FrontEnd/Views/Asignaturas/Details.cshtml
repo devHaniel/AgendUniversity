@@ -1,0 +1,87 @@
+@using FrontEnd.Enums
+@model Asignatura
+
+@{
+    ViewData["Title"] = "Detalles de Asignatura";
+}
+
+<h1>Detalles de Asignatura</h1>
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-book"></i>
+        @Model.Nombre
+    </div>
+    <div class="card-body">
+        <p><strong>Periodo:</strong> Prototipo</p>
+        <p><strong>Número de Tareas:</strong> @Model.Tareas.Count()</p>
+        <p><strong>Estado:</strong> @(((AsignaturaEnum)Model.Estado).ToString())</p>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+            <i class="bi bi-pencil"></i>
+            Editar
+        </a>
+        <button type="button" class="btn btn-outline-danger btn-sm" data-id="@Model.Id" data-nombre="@Model.Nombre"
+                data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="bi bi-trash"></i>
+            Eliminar
+        </button>
+    </div>
+</div>
+
+<h4>Tareas</h4>
+<hr />
+<div class="col">
+    @if (Model.Tareas.Any())
+    {
+        <div class="list-group">
+            @foreach (var tarea in Model.Tareas)
+            {
+                <a href="#" class="list-group-item list-group-item-action mb-2">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">@tarea.Titulo</h5>
+                    </div>
+                    <p class="mb-1">@tarea.Descripcion</p>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">No hay tareas registradas para esta asignatura.</p>
+    }
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar está asignatura <strong id="asignaturaNombre"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger" >Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const asignaturaId = button.getAttribute('data-id');
+            const asignaturaNombre = button.getAttribute('data-nombre');
+
+            document.getElementById('asignaturaNombre').textContent = asignaturaNombre;
+
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = '@Url.Action("Delete", "Asignaturas")/' + asignaturaId;
+        });
+    </script>
+}

@@ -31,7 +31,15 @@ namespace FrontEnd.Controllers
             var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
 
             var ultimoPeriodo = await _periodoService.GetPeriodosByUsuarioIdAsync(userId);
-            modelo.Periodo = ultimoPeriodo.OrderByDescending(p => p.FechaInicio).FirstOrDefault();
+
+            var hoy = DateTime.Now;
+            var periodoActual = ultimoPeriodo.FirstOrDefault(p => p.FechaInicio <= hoy && p.FechaFin >= hoy);
+            if (periodoActual != null)
+            {_logger.LogInformation($"Periodo actual encontrado: {periodoActual.Nombre} (ID: {periodoActual.Id})");}
+            else
+            {_logger.LogInformation($"No se encontró un periodo actual para el usuario ID: {userId}");} 
+
+            modelo.Periodo = periodoActual;
             modelo.Asignaturas = modelo.Periodo?.Asignaturas ?? new List<Asignatura>();
             
             return View(modelo);

@@ -1,6 +1,15 @@
 @model List<Periodo>
 @{
     ViewData["Title"] = "Periodos";
+
+    string ClaseEstado(string estado) => estado switch
+    {
+        "En curso" => "text-bg-success",
+        "Finalizado" => "text-bg-danger",
+        "No iniciado" => "text-bg-warning text-dark",
+        _ => "text-bg-secondary"
+    };
+
 }
 
 <h1>Periodos</h1>
@@ -9,30 +18,51 @@
     <a asp-action="Create" class="btn btn-primary">Crear Nuevo Periodo</a>
 </p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var periodo in Model)
-        {
-            <tr>
-                <td>@periodo.Nombre</td>
-                <td>@periodo.FechaInicio.ToShortDateString()</td>
-                <td>@periodo.FechaFin.ToShortDateString()</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@periodo.Id" class="btn btn-warning btn-sm">Editar</a>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@periodo.Id" data-nombre="@periodo.Nombre">Eliminar</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<div class="row">
+    @foreach (var periodo in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-calendar-event me-2"></i>
+                            <span>@periodo.Nombre</span>
+                        </div>
+                        <div>
+                            <span class="badge @ClaseEstado(periodo.EstadoPeriodo)">
+                                @periodo.EstadoPeriodo
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5>@periodo.Nombre</h5>
+                    <p>Fecha Inicio: @periodo.FechaInicio.ToShortDateString()</p>
+                    <p>Fecha Fin: @periodo.FechaFin.ToShortDateString()</p>
+                </div>
+                <div class="card-footer text-body-secondary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@periodo.Id" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil"></i>
+                                Editar
+                            </a>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal" data-id="@periodo.Id" data-nombre="@periodo.Nombre">
+                                <i class="bi bi-trash"></i>
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 <!-- Modal de Confirmación de Eliminación -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -58,13 +88,13 @@
 @section Scripts {
     <script>
         const deleteModal = document.getElementById('deleteModal');
-        deleteModal.addEventListener('show.bs.modal', function(event) {
+        deleteModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const periodoId = button.getAttribute('data-id');
             const periodoNombre = button.getAttribute('data-nombre');
-            
+
             document.getElementById('periodoNombre').textContent = periodoNombre;
-            
+
             const deleteForm = document.getElementById('deleteForm');
             deleteForm.action = '@Url.Action("Delete", "Periodos")/' + periodoId;
         });

@@ -7,6 +7,7 @@ namespace BackEnd.Repository.Interfaces
     public interface IAsignaturaRepository
     {
         Task<List<Asignatura>> GetAsignaturasAsync();
+        Task<List<Asignatura>> GetAsignaturasByUsuarioIdAsync(int usuarioId);
         Task<Asignatura> GetAsignaturaByIdAsync(int id);
         Task<List<Asignatura>> GetAsignaturasByPeriodoIdAsync(int periodoId);
         Task CreateAsync(Asignatura asignatura);
