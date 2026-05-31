@@ -27,8 +27,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
         // Configurar la duración de la cookie de autenticación
         // este 360 viene por parte del BackEnd, que es el tiempo de expiración del token JWT, por lo que la cookie debe expirar al mismo tiempo que el token
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(360);
-                options.SlidingExpiration = true;
+        // options.ExpireTimeSpan = TimeSpan.FromMinutes(360);
+        //         options.SlidingExpiration = true;
 
     });
 
@@ -48,6 +48,7 @@ builder.Services.AddHttpClient("BackEndApi", client =>
 builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 builder.Services.AddScoped<IPeriodoService, PeriodoService>();
 builder.Services.AddScoped<IAsignaturasService, AsignaturasService>();
+builder.Services.AddScoped<ITareaService, TareaService>();
 
 var app = builder.Build();
 

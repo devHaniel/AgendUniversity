@@ -74,6 +74,7 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ITareaService, TareaService>();
 builder.Services.AddScoped<IAsignaturaService, AsignaturaService>();
 builder.Services.AddScoped<IPeriodoService, PeriodoService>();
+builder.Services.AddScoped<AuthorizationService>();
 
 // Autenticacion
 builder.Services.AddAuthorization();

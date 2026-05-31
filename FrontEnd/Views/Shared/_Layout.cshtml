@@ -62,7 +62,12 @@
                             Asignaturas
                         </a>
                     </li>
-
+                    <li>
+                        <a asp-controller="Tareas" asp-action="Index"
+                           class="nav-link link-dark @(ViewContext.RouteData.Values["Controller"].ToString() == "Tareas" ? "active text-white" : "")">
+                            Tareas
+                        </a>
+                    </li>
                 </ul>
             </aside>
 

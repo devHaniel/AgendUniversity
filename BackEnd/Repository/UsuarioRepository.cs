@@ -20,6 +20,7 @@ namespace BackEnd.Repository
                 .Include(x => x.Periodos)
                 .ThenInclude(p => p.Asignaturas)
                 .ThenInclude(a => a.Tareas)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -29,11 +30,14 @@ namespace BackEnd.Repository
                 .Include(x => x.Periodos)
                 .ThenInclude(p => p.Asignaturas)
                 .ThenInclude(a => a.Tareas)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task<Usuario> GetUsuarioByEmail(string email)
         {
-            return await context.Usuarios.FirstOrDefaultAsync(x => x.Email == email);
+            return await context.Usuarios
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task CreateAsync(Usuario usuario)

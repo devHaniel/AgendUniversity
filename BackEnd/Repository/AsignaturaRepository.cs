@@ -22,6 +22,7 @@ namespace BackEnd.Repository
             return await context.Asignaturas
                 .Include(a => a.Tareas)
                 .Include(a => a.Periodo)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -30,6 +31,7 @@ namespace BackEnd.Repository
             return await context.Asignaturas
                 .Include(a => a.Tareas)
                 .Include(a => a.Periodo)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
@@ -39,6 +41,7 @@ namespace BackEnd.Repository
                 .Where(a => a.Periodo.UsuarioId == usuarioId)
                 .Include(a => a.Tareas)
                 .Include(a => a.Periodo)
+                .AsNoTracking()
                 .ToListAsync();
         } 
 
@@ -48,6 +51,7 @@ namespace BackEnd.Repository
                 .Where(a => a.PeriodoId == periodoId)
                 .Include(a => a.Tareas)
                 .Include(a => a.Periodo)
+                .AsNoTracking()
                 .ToListAsync();
         }
 

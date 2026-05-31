@@ -1,0 +1,44 @@
+@model List<Tarea>
+
+@{
+    ViewData["Title"] = "Tareas";
+}
+
+<h1>Tareas</h1>
+<div class="card-body p-0">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Descripcion</th>
+                <th>Estado</th>
+                <th>Fecha Creación</th>
+                <th>Fecha Entrega</th>
+                <th>Calificación</th>
+                <th>Asignatura</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var tarea in Model)
+                {
+                    <tr>
+                        <td>@tarea.Titulo</td>
+                        <td>@tarea.Descripcion</td>
+                        <td>@tarea.Estado</td>
+                        <td>@tarea.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                        <td>@tarea.FechaEntrega.ToString("dd/MM/yyyy")</td>
+                        <td>@tarea.Calificacion</td>
+                        <td><a class="link-opacity-100" asp-controller="Asignaturas" asp-action="Details" asp-route-asignaturaId="@tarea.AsignaturaId">@tarea.Asignatura.Nombre</a></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center">No hay tareas disponibles.</td>
+                </tr>
+            }
+    </table>
+</div>
