@@ -14,6 +14,7 @@ namespace BackEnd.Dtos
         public int Estado { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
         public DateTime FechaEntrega { get; set; }
+        public decimal Nota { get; set; }
         public decimal Calificacion { get; set; }
     }
 }

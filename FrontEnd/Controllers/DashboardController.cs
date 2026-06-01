@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FrontEnd.Enums;
 using FrontEnd.Models;
 using FrontEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -17,34 +18,60 @@ namespace FrontEnd.Controllers
     {
         private readonly ILogger<DashboardController> _logger;
         private readonly IPeriodoService _periodoService;
+        private readonly ITareaService _tareaService;
+        private readonly IAsignaturasService _asignaturaService;
 
         public DashboardController(ILogger<DashboardController> logger,
-                                IPeriodoService periodoService)
+                                IPeriodoService periodoService,
+                                ITareaService tareaService,
+                                IAsignaturasService asignaturasService)
         {
             _logger = logger;
             _periodoService = periodoService;
+            _tareaService = tareaService;
+            _asignaturaService = asignaturasService;
         }
 
         public async Task<IActionResult> Index()
         {
             var modelo = new DashboardViewModel();
-            var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
 
-            var ultimoPeriodo = await _periodoService.GetPeriodosByUsuarioIdAsync(userId);
+            var userId = int.Parse(User.Claims
+                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+            var periodos = await _periodoService.GetPeriodosByUsuarioIdAsync(userId);
 
             var hoy = DateTime.Now;
-            var periodoActual = ultimoPeriodo.FirstOrDefault(p => p.FechaInicio <= hoy && p.FechaFin >= hoy);
-            if (periodoActual != null)
-            {_logger.LogInformation($"Periodo actual encontrado: {periodoActual.Nombre} (ID: {periodoActual.Id})");}
-            else
-            {_logger.LogInformation($"No se encontró un periodo actual para el usuario ID: {userId}");} 
+
+            var periodoActual = periodos
+                .FirstOrDefault(p => p.FechaInicio <= hoy && p.FechaFin >= hoy);
+
+            var tareas = await _tareaService.GetTareasByUsuario(userId);
+
+            foreach (var tarea in tareas)
+            {
+                tarea.Asignatura = await _asignaturaService
+                    .GetAsignaturaByIdAsync(tarea.AsignaturaId);
+            }
+
+            var tareasPendientes = periodoActual == null
+    ? new List<Tarea>()
+    : tareas
+        .Where(t => t.Estado == (int)TareaEnum.Pendiente
+                 && t.FechaEntrega >= periodoActual.FechaInicio
+                 && t.FechaEntrega <= periodoActual.FechaFin)
+        .OrderBy(t => t.FechaEntrega)
+        .ToList();
+
+            _logger.LogInformation($"Valor entero enum periodo: {(int)TareaEnum.Pendiente}");
 
             modelo.Periodo = periodoActual;
-            modelo.Asignaturas = modelo.Periodo?.Asignaturas ?? new List<Asignatura>();
-            
+            modelo.Asignaturas = periodoActual?.Asignaturas ?? new List<Asignatura>();
+            modelo.Tareas = tareasPendientes;
+
             return View(modelo);
         }
-        
-        
+
+
     }
 }

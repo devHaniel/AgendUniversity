@@ -9,5 +9,6 @@ namespace FrontEnd.Models
     {
         public Periodo Periodo { get; set; }
         public List<Asignatura> Asignaturas { get; set; } = new();
+        public List<Tarea> Tareas {get; set;} = new();
     }
 }

@@ -136,7 +136,7 @@ namespace FrontEnd.Services
             return await response.Content.ReadFromJsonAsync<Tarea>();
         }
 
-        public async Task<Tarea> CreateTareaAsync(TareaDto nuevaTarea)
+        public async Task<Tarea> CreateTareaAsync(TareaCreateDto nuevaTarea)
         {
             var client = _httpClientFactory.CreateClient("BackEndApi");
 

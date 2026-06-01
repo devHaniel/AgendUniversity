@@ -12,7 +12,7 @@ namespace FrontEnd.Services.Interfaces
         Task<List<Tarea>> GetTareasByUsuario(int usuarioId);
         Task<List<Tarea>> GetTareasByAsignatura(int asignaturaId);
         Task<Tarea> GetTareasById(Guid tareaId);
-        Task<Tarea> CreateTareaAsync(TareaDto nuevaTarea);
+        Task<Tarea> CreateTareaAsync(TareaCreateDto nuevaTarea);
         Task<bool> EditTareaAsync(Guid tareaId, TareaDto tareaActualizada);
         Task<bool> DeleteTareaAsync(Guid tareaId);
     }

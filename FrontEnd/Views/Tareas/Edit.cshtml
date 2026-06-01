@@ -1,0 +1,77 @@
+@model TareaCreateViewModel
+
+@{
+    ViewData["Title"] = "Editar tarea";
+}
+
+<h1>Editar tarea</h1>
+
+<hr />
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="AsignaturaId" class="form-label">Asignatura</label>
+        <select asp-for="AsignaturaId" asp-items="Model.Asignaturas" class="form-select">
+            <option value="">Seleccione una asignatura</option>
+        </select>
+        <span asp-validation-for="AsignaturaId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Titulo" class="form-label">Título</label>
+        <input asp-for="Titulo" class="form-control" />
+        <span asp-validation-for="Titulo" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Descripcion" class="form-label">Descripción</label>
+        <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Descripcion" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Estado" class="form-label">Estado</label>
+        <select asp-for="Estado" asp-items="Model.Estados" class="form-select"></select>
+        <span asp-validation-for="Estado" class="text-danger"></span>
+    </div>
+        
+    <div class="mb-3">
+        <label asp-for="FechaCreacion" class="form-label">Fecha de creación</label>
+        <input asp-for="FechaCreacion" type="datetime-local" class="form-control" />
+        <span asp-validation-for="FechaCreacion" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FechaEntrega" class="form-label">Fecha de entrega</label>
+        <input asp-for="FechaEntrega" type="datetime-local" class="form-control" />
+        <span asp-validation-for="FechaEntrega" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Nota" class="form-label">Nota sacada</label>
+        <input asp-for="Nota" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="Nota" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Calificacion" class="form-label">Calificación de la tarea</label>
+        <input asp-for="Calificacion" type="number" step="0.01" class="form-control" />
+        <span asp-validation-for="Calificacion" class="text-danger"></span>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+            Guardar
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Cancelar
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
