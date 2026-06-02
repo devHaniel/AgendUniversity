@@ -65,3 +65,20 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.sidebar {
+    width: 260px;
+    transition: width .3s ease;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar.no-transition {
+    transition: none !important;
+}
+
+.sidebar.collapsed .sidebar-text {
+    display: none;
+}

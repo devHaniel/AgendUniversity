@@ -16,13 +16,12 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow">
             <div class="container-fluid">
+                <button class="btn btn-outline-primary me-2" type="button" id="btnSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index"><i
                     class="bi bi-backpack text-primary"><span> </span></i>AgendUniversity</a>
 
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target=".navbar-collapse">e
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
 
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav ms-auto">
@@ -41,31 +40,38 @@
 
         <div class="d-flex">
             <!-- Sidebar -->
-            <aside class="d-flex flex-column flex-shrink-0 p-3 bg-light border-end min-vh-100" style="width: 260px;">
+            <aside id="sidebar" class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-light border-end min-vh-100">
 
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li>
                         <a asp-controller="Dashboard" asp-action="Index"
                            class="nav-link link-dark @(ViewContext.RouteData.Values["Controller"].ToString() == "Dashboard" ? "active text-white" : "")">
-                            Dashboard
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            <span class="sidebar-text">Dashboard</span>
                         </a>
                     </li>
+
                     <li>
                         <a asp-controller="Periodos" asp-action="Index"
                            class="nav-link link-dark @(ViewContext.RouteData.Values["Controller"].ToString() == "Periodos" ? "active text-white" : "")">
-                            Periodos
+                            <i class="bi bi-calendar-event me-2"></i>
+                            <span class="sidebar-text">Periodos</span>
                         </a>
                     </li>
+
                     <li>
                         <a asp-controller="Asignaturas" asp-action="Index"
                            class="nav-link link-dark @(ViewContext.RouteData.Values["Controller"].ToString() == "Asignaturas" ? "active text-white" : "")">
-                            Asignaturas
+                            <i class="bi bi-book me-2"></i>
+                            <span class="sidebar-text">Asignaturas</span>
                         </a>
                     </li>
+
                     <li>
                         <a asp-controller="Tareas" asp-action="Index"
                            class="nav-link link-dark @(ViewContext.RouteData.Values["Controller"].ToString() == "Tareas" ? "active text-white" : "")">
-                            Tareas
+                            <i class="bi bi-check2-square me-2"></i>
+                            <span class="sidebar-text">Tareas</span>
                         </a>
                     </li>
                 </ul>
@@ -121,6 +127,34 @@
                 });
             </script>
         }
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            const btnSidebar = document.getElementById("btnSidebar");
+            const sidebar = document.getElementById("sidebar");
+
+            if (!btnSidebar || !sidebar) return;
+
+            sidebar.classList.add("no-transition");
+
+            if (localStorage.getItem("sidebarCollapsed") === "true") {
+            sidebar.classList.add("collapsed");
+            }
+
+            setTimeout(() => {
+            sidebar.classList.remove("no-transition");
+            }, 50);
+
+            btnSidebar.addEventListener("click", function () {
+            sidebar.classList.toggle("collapsed");
+
+            localStorage.setItem(
+            "sidebarCollapsed",
+            sidebar.classList.contains("collapsed")
+            );
+            });
+            });
+        </script>
     </body>
 
 </html>
