@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using FrontEnd.Models.Asignatura;
 
-namespace FrontEnd.Models
+namespace FrontEnd.Models.Periodo
 {
     public class Periodo
     {
@@ -16,7 +15,7 @@ namespace FrontEnd.Models
         public DateTime FechaInicio { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime FechaFin { get; set; }
-        public List<Asignatura> Asignaturas { get; set; } = new();
+        public List<Asignatura.Asignatura> Asignaturas { get; set; } = new();
 
         // Propiedad calculada para mostrar el estado del período como texto
         // en curso, finalizada

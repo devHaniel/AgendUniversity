@@ -1,5 +1,5 @@
 @using FrontEnd.Enums
-@model Asignatura
+@model FrontEnd.Models.Asignatura.Asignatura
 
 @{
     ViewData["Title"] = "Detalles de Asignatura";
@@ -39,9 +39,8 @@
 <hr />
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <a asp-controller="Tareas" asp-action="Create" 
-           asp-route-returnUrl="@Url.Action("Details", "Asignaturas")"
-           class="btn btn-primary">
+        <a asp-controller="Tareas" asp-action="Create" asp-route-returnUrl="@Url.Action("Details", "Asignaturas")"
+           class="btn btn-primary" asp-route-asignaturaId="@Model.Id">
             Nueva Tarea
         </a>
 
@@ -52,11 +51,11 @@
         <thead>
             <tr>
                 <th>Titulo</th>
-                <th>Descripcion</th>
                 <th>Estado</th>
                 <th>Fecha Creación</th>
                 <th>Fecha Entrega</th>
                 <th>Calificación</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -65,12 +64,27 @@
                 @foreach (var tarea in Model.Tareas)
                 {
                     <tr>
-                        <td>@tarea.Titulo</td>
-                        <td>@tarea.Descripcion</td>
+                        <td><a asp-action="Details" asp-route-id="@tarea.Id" asp-controller="Tareas" class="link-primary fw-bold">
+                                            @tarea.Titulo
+                                        </a>
+                        </td>
                         <td><span class="badge @ClaseEstado(tarea.Estado)">@(((TareaEnum)tarea.Estado).ToString())</span></td>
                         <td>@tarea.FechaCreacion.ToString("dd/MM/yyyy")</td>
                         <td>@tarea.FechaEntrega.ToString("dd/MM/yyyy")</td>
                         <td>@tarea.Nota / @tarea.Calificacion</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@tarea.Id"
+                            asp-route-returnUrl="@Url.Action("Details", "Asignaturas")"
+                             asp-controller="Tareas" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil"></i>
+                                Editar
+                            </a>
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModalTarea" data-id="@tarea.Id" data-nombre="@tarea.Titulo">
+                                <i class="bi bi-trash"></i>
+                                Eliminar
+                            </button>
+                        </td>
 
                     </tr>
                 }
@@ -81,42 +95,97 @@
                     <td colspan="7" class="text-center">No hay tareas disponibles.</td>
                 </tr>
             }
-    </table>
-</div>
+        </table>
+    </div>
 
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar está asignatura <strong id="asignaturaNombre"></strong>?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="deleteForm" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-danger" >Eliminar</button>
-                </form>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar está asignatura <strong id="asignaturaNombre"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deleteForm" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-@section Scripts {
-    <script>
-        const deleteModal = document.getElementById('deleteModal');
-        deleteModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const asignaturaId = button.getAttribute('data-id');
-            const asignaturaNombre = button.getAttribute('data-nombre');
+    <div class="modal fade" id="deleteModalTarea" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
-            document.getElementById('asignaturaNombre').textContent = asignaturaNombre;
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar tarea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-            const deleteForm = document.getElementById('deleteForm');
-            deleteForm.action = '@Url.Action("Delete", "Asignaturas")/' + asignaturaId;
-        });
-    </script>
-}
+                <div class="modal-body">
+                    ¿Deseas eliminar la tarea <strong id="tareaNombre"></strong>?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <form id="deleteFormTarea" asp-action="Delete" method="post">
+                        @Html.AntiForgeryToken()
+                        @{
+                            var returnUrl = Context.Request.Path + Context.Request.QueryString;
+                        }
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+                        <input type="hidden" id="deleteId" name="id" />
+
+                        <button type="submit" class="btn btn-danger">
+                            Eliminar
+                        </button>
+
+                        
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            const deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const asignaturaId = button.getAttribute('data-id');
+                const asignaturaNombre = button.getAttribute('data-nombre');
+
+                document.getElementById('asignaturaNombre').textContent = asignaturaNombre;
+
+                const deleteForm = document.getElementById('deleteForm');
+                deleteForm.action = '@Url.Action("Delete", "Asignaturas")/' + asignaturaId;
+            });
+
+            const deleteModalTarea = document.getElementById('deleteModalTarea');
+
+            deleteModalTarea.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+
+                const tareaId = button.getAttribute('data-id');
+                const tareaNombre = button.getAttribute('data-nombre');
+
+                document.getElementById('tareaNombre').textContent = tareaNombre;
+                document.getElementById('deleteId').value = tareaId;
+
+                const deleteForm = document.getElementById('deleteFormTarea');
+                deleteForm.action = '@Url.Action("Delete", "Tareas")/' + tareaId;
+
+            });
+        </script>
+    }

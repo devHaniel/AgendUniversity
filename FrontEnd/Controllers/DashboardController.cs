@@ -6,6 +6,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using FrontEnd.Enums;
 using FrontEnd.Models;
+using FrontEnd.Models.Periodo;
+using FrontEnd.Models.Tarea;
+using FrontEnd.Models.Asignatura;
 using FrontEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -55,7 +58,7 @@ namespace FrontEnd.Controllers
             }
 
             var tareasPendientes = periodoActual == null
-    ? new List<Tarea>()
+    ? new List<FrontEnd.Models.Tarea.Tarea>()
     : tareas
         .Where(t => t.Estado == (int)TareaEnum.Pendiente
                  && t.FechaEntrega >= periodoActual.FechaInicio
@@ -66,7 +69,7 @@ namespace FrontEnd.Controllers
             _logger.LogInformation($"Valor entero enum periodo: {(int)TareaEnum.Pendiente}");
 
             modelo.Periodo = periodoActual;
-            modelo.Asignaturas = periodoActual?.Asignaturas ?? new List<Asignatura>();
+            modelo.Asignaturas = periodoActual?.Asignaturas ?? new List<FrontEnd.Models.Asignatura.Asignatura>();
             modelo.Tareas = tareasPendientes;
 
             return View(modelo);

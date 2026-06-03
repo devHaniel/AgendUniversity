@@ -5,6 +5,9 @@ namespace BackEnd.Dtos
     public class TareaUpdateDto
     {
         [Required]
+        public int AsignaturaId { get; set; }
+
+        [Required]
         [StringLength(100)]
         public string Titulo { get; set; }
 

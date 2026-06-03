@@ -1,6 +1,6 @@
 using System;
 
-namespace FrontEnd.Models
+namespace FrontEnd.Models.Tarea
 {
     public class Tarea
     {
@@ -13,6 +13,6 @@ namespace FrontEnd.Models
         public DateTime FechaEntrega { get; set; } = DateTime.Now;
         public decimal Nota { get; set; }
         public decimal Calificacion { get; set; }
-        public Asignatura Asignatura { get; set; }
+        public Asignatura.Asignatura Asignatura { get; set; }
     }
 }

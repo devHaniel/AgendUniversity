@@ -1,5 +1,5 @@
 @using FrontEnd.Enums
-@model AsignaturaViewModel
+@model FrontEnd.Models.Asignatura.AsignaturaViewModel
 
 @{
     string ClaseEstado(int estado) => estado switch
@@ -21,8 +21,9 @@
             <thead>
                 <tr>
                     <th>Asignatura</th>
-                    <th>Estado</th>
+                    <th>Nota</th>
                     <th>Tareas</th>
+                    <th>Estado</th>
                     <th>Periodo</th>
                     <th>Acciones</th>
                 </tr>
@@ -35,8 +36,9 @@
                     {
                         <tr>
                             <td><a class="link-opacity-100" asp-controller="Asignaturas" asp-action="Details" asp-route-asignaturaId="@asignatura.Id">@asignatura.Nombre</a></td>
-                            <td><span class="badge @ClaseEstado(asignatura.Estado)">@(((AsignaturaEnum)asignatura.Estado).ToString())</span></td>
+                            <td> @asignatura.TotalNota/@asignatura.TotalCalificaciones </td>
                             <td>@asignatura.Tareas.Count()</td>
+                            <td><span class="badge @ClaseEstado(asignatura.Estado)">@(((AsignaturaEnum)asignatura.Estado).ToString())</span></td>
                             <td>@ObtenerNombrePeriodo(asignatura.PeriodoId)</td>
                             <td>
                                 <a asp-controller="Asignaturas"

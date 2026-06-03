@@ -1,4 +1,4 @@
-@model AsignaturaViewModel
+@model FrontEnd.Models.Asignatura.AsignaturaViewModel
 @using FrontEnd.Enums
 
 @{
@@ -130,9 +130,10 @@
                     <a asp-controller="Asignaturas" 
                        asp-action="Create" 
                        asp-route-returnUrl="@Url.Action("Details", "Periodos", new { id = Model.Periodo.Id })"
+                       asp-route-periodoId="@Model.Periodo.Id"
                        class="btn btn-sm btn-primary">
                         <i class="bi bi-plus"></i>
-                        Nueva
+                        Nueva Asignatura
                     </a>
                     <span class="badge text-bg-primary">
                         N° @Model.Asignaturas.Count

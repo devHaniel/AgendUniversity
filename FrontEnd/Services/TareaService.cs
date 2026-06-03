@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BackEnd.Dtos;
 using FrontEnd.Helpers;
-using FrontEnd.Models;
+using FrontEnd.Models.Tarea;
 using FrontEnd.Services.Interfaces;
 
 namespace FrontEnd.Services
@@ -173,7 +173,7 @@ namespace FrontEnd.Services
             return await response.Content.ReadFromJsonAsync<Tarea>();
         }
 
-        public async Task<bool> EditTareaAsync(Guid tareaId, TareaDto tareaActualizada)
+        public async Task<bool> EditTareaAsync(Guid tareaId, TareaUpdateDto tareaActualizada)
         {
             var client = _httpClientFactory.CreateClient("BackEndApi");
 

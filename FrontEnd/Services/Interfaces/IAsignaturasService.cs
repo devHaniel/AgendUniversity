@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BackEnd.Dtos;
 using FrontEnd.Models;
+using FrontEnd.Models.Asignatura;
 
 namespace FrontEnd.Services.Interfaces
 {

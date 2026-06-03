@@ -67,18 +67,18 @@ body {
 }
 
 .sidebar {
-    width: 260px;
-    transition: width .3s ease;
-}
-
-.sidebar.collapsed {
     width: 70px;
 }
 
-.sidebar.no-transition {
-    transition: none !important;
+.sidebar .sidebar-text {
+    display: none;
 }
 
-.sidebar.collapsed .sidebar-text {
-    display: none;
+.sidebar .nav-link {
+    text-align: center;
+}
+
+.sidebar .nav-link i {
+    font-size: 1.3rem;
+    margin-right: 0 !important;
 }

@@ -7,8 +7,8 @@ namespace FrontEnd.Models
 {
     public class DashboardViewModel
     {
-        public Periodo Periodo { get; set; }
-        public List<Asignatura> Asignaturas { get; set; } = new();
-        public List<Tarea> Tareas {get; set;} = new();
+        public Periodo.Periodo Periodo { get; set; }
+        public List<Asignatura.Asignatura> Asignaturas { get; set; } = new();
+        public List<Tarea.Tarea> Tareas {get; set;} = new();
     }
 }

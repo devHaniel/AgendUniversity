@@ -1,4 +1,4 @@
-@model TareaCreateViewModel
+@model FrontEnd.Models.Tarea.TareaUpdateViewModel
 
 @{
     ViewData["Title"] = "Editar tarea";
@@ -10,6 +10,8 @@
 
 <form asp-action="Edit" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input asp-for="Id" type="hidden" />
 
     <div class="mb-3">
         <label asp-for="AsignaturaId" class="form-label">Asignatura</label>

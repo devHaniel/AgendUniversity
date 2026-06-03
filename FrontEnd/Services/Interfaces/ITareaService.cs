@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BackEnd.Dtos;
-using FrontEnd.Models;
+using FrontEnd.Models.Tarea;
 
 namespace FrontEnd.Services.Interfaces
 {
     public interface ITareaService
     {
-        Task<List<Tarea>> GetTareasByUsuario(int usuarioId);
-        Task<List<Tarea>> GetTareasByAsignatura(int asignaturaId);
-        Task<Tarea> GetTareasById(Guid tareaId);
-        Task<Tarea> CreateTareaAsync(TareaCreateDto nuevaTarea);
-        Task<bool> EditTareaAsync(Guid tareaId, TareaDto tareaActualizada);
+        Task<List<FrontEnd.Models.Tarea.Tarea>> GetTareasByUsuario(int usuarioId);
+        Task<List<FrontEnd.Models.Tarea.Tarea>> GetTareasByAsignatura(int asignaturaId);
+        Task<FrontEnd.Models.Tarea.Tarea> GetTareasById(Guid tareaId);
+        Task<FrontEnd.Models.Tarea.Tarea> CreateTareaAsync(TareaCreateDto nuevaTarea);
+        Task<bool> EditTareaAsync(Guid tareaId, TareaUpdateDto tareaActualizada);
         Task<bool> DeleteTareaAsync(Guid tareaId);
     }
 }

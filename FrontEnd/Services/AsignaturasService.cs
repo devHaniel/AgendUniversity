@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BackEnd.Dtos;
 using FrontEnd.Helpers;
 using FrontEnd.Models;
+using FrontEnd.Models.Asignatura;
 using FrontEnd.Services.Interfaces;
 
 namespace FrontEnd.Services

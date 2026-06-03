@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using BackEnd.Dtos;
 using FrontEnd.Enums;
-using FrontEnd.Models;
+using FrontEnd.Models.Asignatura;
 using FrontEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -115,7 +115,7 @@ namespace FrontEnd.Controllers
             return View(asignatura);
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int periodoId = 0)
         {
             var userId = int.Parse(User.Claims
                 .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
@@ -137,6 +137,11 @@ namespace FrontEnd.Controllers
                     })
                     .ToList()
             };
+
+            if (periodoId > 0)
+            {
+                model.PeriodoId = periodoId;
+            }
 
             return View(model);
         }

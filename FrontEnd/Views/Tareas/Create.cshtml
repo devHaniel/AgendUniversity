@@ -1,4 +1,4 @@
-@model TareaCreateViewModel
+@model FrontEnd.Models.Tarea.TareaCreateViewModel
 
 @{
     ViewData["Title"] = "Crear tarea";
@@ -13,21 +13,25 @@
 
     <div class="mb-3">
         <label asp-for="AsignaturaId" class="form-label">Asignatura</label>
-        <select asp-for="AsignaturaId" asp-items="Model.Asignaturas" class="form-select">
-            <option value="">Seleccione una asignatura</option>
-        </select>
+       
+            <select asp-for="AsignaturaId" asp-items="Model.Asignaturas" class="form-select">
+                <option value="">Seleccione una asignatura</option>
+            </select>
         <span asp-validation-for="AsignaturaId" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="Titulo" class="form-label">Título</label>
-        <input asp-for="Titulo" class="form-control" />
+        <input asp-for="Titulo" class="form-control" 
+        placeholder="Ingrese el título de la tarea"/>
         <span asp-validation-for="Titulo" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="Descripcion" class="form-label">Descripción</label>
-        <textarea asp-for="Descripcion" class="form-control" rows="4"></textarea>
+        <textarea asp-for="Descripcion" class="form-control" rows="4"
+        placeholder="Ingrese la descripción de la tarea (opcional)"
+        ></textarea>
         <span asp-validation-for="Descripcion" class="text-danger"></span>
     </div>
 
@@ -39,13 +43,13 @@
         
     <div class="mb-3">
         <label asp-for="FechaCreacion" class="form-label">Fecha de creación</label>
-        <input asp-for="FechaCreacion" type="datetime-local" class="form-control" />
+        <input asp-for="FechaCreacion" type="date" class="form-control" />
         <span asp-validation-for="FechaCreacion" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="FechaEntrega" class="form-label">Fecha de entrega</label>
-        <input asp-for="FechaEntrega" type="datetime-local" class="form-control" />
+        <input asp-for="FechaEntrega" type="date" class="form-control" />
         <span asp-validation-for="FechaEntrega" class="text-danger"></span>
     </div>
 

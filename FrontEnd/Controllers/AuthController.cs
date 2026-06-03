@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using FrontEnd.Helpers;
 using FrontEnd.Models;
+using FrontEnd.Models.Usuario;
 using FrontEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

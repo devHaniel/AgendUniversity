@@ -6,7 +6,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using BackEnd.Dtos;
 using FrontEnd.Enums;
-using FrontEnd.Models;
+using FrontEnd.Models.Tarea;
+using FrontEnd.Models.Asignatura;
 using FrontEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +49,18 @@ namespace FrontEnd.Controllers
             return View(ordenados);
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var tarea = await _tareaService.GetTareasById(id);
+            if (tarea == null)
+                return NotFound();
+
+            tarea.Asignatura = await _asignaturaService.GetAsignaturaByIdAsync(tarea.AsignaturaId);
+
+            return View(tarea);
+        }
+
+        public async Task<IActionResult> Create(int asignaturaId = 0)
         {
             var userId = int.Parse(User.Claims
                 .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
@@ -71,6 +83,10 @@ namespace FrontEnd.Controllers
                     })
                     .ToList()
             };
+
+            if (asignaturaId > 0)
+                modelo.AsignaturaId = asignaturaId;
+
             return View(modelo);
         }
 
@@ -104,7 +120,8 @@ namespace FrontEnd.Controllers
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     return Redirect(returnUrl);
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Asignaturas", new { asignaturaId = model.AsignaturaId });
+
             }
 
             TempData["Mensaje"] = "No se creó la tarea.";
@@ -113,28 +130,144 @@ namespace FrontEnd.Controllers
             return View(model);
         }
 
-        private async Task CargarListasTarea(TareaCreateViewModel modelo)
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var userId = int.Parse(User.Claims
+                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+            var tarea = await _tareaService.GetTareasById(id);
+            if (tarea == null)
+                return NotFound();
+
+            var modelo = new TareaUpdateViewModel
+            {
+                Id = tarea.Id,
+                AsignaturaId = tarea.AsignaturaId,
+                Titulo = tarea.Titulo,
+                Descripcion = tarea.Descripcion,
+                Estado = tarea.Estado,
+                FechaCreacion = tarea.FechaCreacion,
+                FechaEntrega = tarea.FechaEntrega,
+                Calificacion = tarea.Calificacion,
+                Nota = tarea.Nota
+            };
+            await CargarListasTarea(modelo);
+            return View(modelo);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Guid id, TareaUpdateDto model, string returnUrl = null)
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new TareaUpdateViewModel
+                {
+                    Id = id,
+                    AsignaturaId = model.AsignaturaId,
+                    Titulo = model.Titulo,
+                    Descripcion = model.Descripcion,
+                    Estado = model.Estado,
+                    FechaCreacion = model.FechaCreacion,
+                    FechaEntrega = model.FechaEntrega,
+                    Calificacion = model.Calificacion,
+                    Nota = model.Nota
+                };
+                await CargarListasTarea(viewModel);
+                return View(viewModel);
+            }
+
+            var success = await _tareaService.EditTareaAsync(id, model);
+
+            if (success)
+            {
+                TempData["Success"] = "Tarea actualizada correctamente.";
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+                // return RedirectToAction(nameof(Edit), new { id = id });
+            }
+
+            TempData["Error"] = "Error al actualizar la tarea.";
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            return RedirectToAction("Details", "Asignaturas", new { asignaturaId = model.AsignaturaId });
+
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid id, string returnUrl = null)
+        {
+            var tarea = await _tareaService.GetTareasById(id);
+
+            if (tarea == null)
+                return NotFound();
+
+            var success = await _tareaService.DeleteTareaAsync(id);
+
+            if (!success)
+            {
+                TempData["Error"] = "Error al eliminar la tarea.";
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["Success"] = "Tarea eliminada correctamente.";
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            return RedirectToAction(nameof(Index));
+        }
+
+        private async Task CargarListasTarea<T>(T modelo) where T : class
         {
             var userId = int.Parse(User.Claims
                 .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
 
             var asignaturas = await _asignaturaService.GetAsignaturasByUsuarioIdAsync(userId);
 
-            modelo.Asignaturas = asignaturas
-                .Select(a => new SelectListItem
-                {
-                    Value = a.Id.ToString(),
-                    Text = a.Nombre
-                })
-                .ToList();
-
-            modelo.Estados = Enum.GetValues<TareaEnum>()
-                    .Select(e => new SelectListItem
+            if (modelo is TareaCreateViewModel createModel)
+            {
+                createModel.Asignaturas = asignaturas
+                    .Select(a => new SelectListItem
                     {
-                        Value = ((int)e).ToString(),
-                        Text = e.ToString()
+                        Value = a.Id.ToString(),
+                        Text = a.Nombre,
+                        Selected = a.Id == createModel.AsignaturaId
                     })
                     .ToList();
+
+                createModel.Estados = Enum.GetValues<TareaEnum>()
+                        .Select(e => new SelectListItem
+                        {
+                            Value = ((int)e).ToString(),
+                            Text = e.ToString(),
+                            Selected = (int)e == createModel.Estado
+                        })
+                        .ToList();
+            }
+            else if (modelo is TareaUpdateViewModel updateModel)
+            {
+                updateModel.Asignaturas = asignaturas
+                    .Select(a => new SelectListItem
+                    {
+                        Value = a.Id.ToString(),
+                        Text = a.Nombre,
+                        Selected = a.Id == updateModel.AsignaturaId
+                    })
+                    .ToList();
+
+                updateModel.Estados = Enum.GetValues<TareaEnum>()
+                        .Select(e => new SelectListItem
+                        {
+                            Value = ((int)e).ToString(),
+                            Text = e.ToString(),
+                            Selected = (int)e == updateModel.Estado
+                        })
+                        .ToList();
+            }
         }
+
+
     }
 }

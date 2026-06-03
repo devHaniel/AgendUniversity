@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BackEnd.Dtos;
 using FrontEnd.Helpers;
-using FrontEnd.Models;
+using FrontEnd.Models.Periodo;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 

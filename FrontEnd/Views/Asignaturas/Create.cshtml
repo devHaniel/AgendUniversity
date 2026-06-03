@@ -1,4 +1,4 @@
-@model AsignaturaCreateViewModel
+@model FrontEnd.Models.Asignatura.AsignaturaCreateViewModel
 
 @{
     ViewData["Title"] = "Crear Asignatura";
@@ -30,19 +30,15 @@
 
             <div class="mb-3">
                 <label asp-for="PeriodoId" class="form-label">Periodo</label>
-                <select asp-for="PeriodoId"
-                        asp-items="Model.Periodos"
-                        class="form-select">
-                    <option value="">Seleccione un periodo</option>
-                </select>
+                    <select asp-for="PeriodoId" asp-items="Model.Periodos" class="form-select">
+                        <option value="">Seleccione un periodo</option>
+                    </select>
                 <span asp-validation-for="PeriodoId" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Estado" class="form-label">Estado</label>
-                <select asp-for="Estado"
-                        asp-items="Model.Estados"
-                        class="form-select">
+                <select asp-for="Estado" asp-items="Model.Estados" class="form-select">
                     <option value="">Seleccione un estado</option>
                 </select>
                 <span asp-validation-for="Estado" class="text-danger"></span>

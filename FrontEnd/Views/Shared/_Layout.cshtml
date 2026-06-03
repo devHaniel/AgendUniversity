@@ -16,9 +16,6 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow">
             <div class="container-fluid">
-                <button class="btn btn-outline-primary me-2" type="button" id="btnSidebar">
-                    <i class="bi bi-list"></i>
-                </button>
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index"><i
                     class="bi bi-backpack text-primary"><span> </span></i>AgendUniversity</a>
 
@@ -40,7 +37,7 @@
 
         <div class="d-flex">
             <!-- Sidebar -->
-            <aside id="sidebar" class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-light border-end min-vh-100">
+            <aside id="sidebar" class="sidebar collapsed d-flex flex-column flex-shrink-0 p-3 bg-light border-end min-vh-100">
 
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li>
@@ -67,13 +64,13 @@
                         </a>
                     </li>
 
-                    <li>
+                    @* <li>
                         <a asp-controller="Tareas" asp-action="Index"
                            class="nav-link link-dark @(ViewContext.RouteData.Values["Controller"].ToString() == "Tareas" ? "active text-white" : "")">
                             <i class="bi bi-check2-square me-2"></i>
                             <span class="sidebar-text">Tareas</span>
                         </a>
-                    </li>
+                    </li> *@
                 </ul>
             </aside>
 
@@ -127,34 +124,6 @@
                 });
             </script>
         }
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-            const btnSidebar = document.getElementById("btnSidebar");
-            const sidebar = document.getElementById("sidebar");
-
-            if (!btnSidebar || !sidebar) return;
-
-            sidebar.classList.add("no-transition");
-
-            if (localStorage.getItem("sidebarCollapsed") === "true") {
-            sidebar.classList.add("collapsed");
-            }
-
-            setTimeout(() => {
-            sidebar.classList.remove("no-transition");
-            }, 50);
-
-            btnSidebar.addEventListener("click", function () {
-            sidebar.classList.toggle("collapsed");
-
-            localStorage.setItem(
-            "sidebarCollapsed",
-            sidebar.classList.contains("collapsed")
-            );
-            });
-            });
-        </script>
     </body>
 
 </html>
