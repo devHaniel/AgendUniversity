@@ -1,6 +1,8 @@
 # AgendUniversity
 
-<img width="1905" height="969" alt="Captura desde 2026-05-29 01-35-34" src="https://github.com/user-attachments/assets/973dfceb-ad0e-4f81-9107-d51a98eb0d03" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/973dfceb-ad0e-4f81-9107-d51a98eb0d03" alt="AgendUniversity Banner" width="100%">
+</p>
 
 ## 1. ¿Qué es AgendUniversity?
 
@@ -13,6 +15,22 @@ En muchas ocasiones, los estudiantes acumulan información en notas dispersas o 
 - mantener un historial de la experiencia universitaria.
 
 Este enfoque facilita la revisión de qué se cursó en cada etapa, ayuda a planificar futuras materias y mejora el seguimiento del desempeño académico.
+
+## Capturas del sistema
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f1af0abc-0da2-479d-a58d-10d1b87c2d4c" width="48%">
+  <img src="https://://github.com/user-attachments/assets/38e4b592-1af9-4e82-8466-00db79f4f090" width="48%">
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4bbe677a-5a86-4009-a336-f916c99a0037" width="48%">
+  <img src="https://github.com/user-attachments/assets/c79ff293-5d07-4966-8582-66128691a787" width="48%">
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/dd55a7b4-62fd-4848-a20a-2addcf2ec7dc" width="48%">
+</p>
 
 ## 2. Detalles del proyecto
 
