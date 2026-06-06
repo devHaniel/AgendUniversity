@@ -1,4 +1,5 @@
 using BackEnd.Dtos;
+using BackEnd.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace BackEnd.Service.Interfaces
         Task<List<TareaDto>> GetTareasAsync();
         Task<TareaDto> GetTareaByIdAsync(Guid id);
         Task<List<TareaDto>> GetTareasByUsuarioIdAsync(int usuarioId);
+        Task<PagedResult<TareaDto>> GetTareasByUsuarioIdPagedAsync(int usuarioId, int page, int pageSize);
         Task<List<TareaDto>> GetTareasByAsignaturaIdAsync(int asignaturaId);
         Task<TareaDto> CreateAsync(TareaCreateDto dto);
         Task UpdateAsync(Guid id, TareaUpdateDto dto);

@@ -42,8 +42,28 @@ namespace BackEnd.Repository
                 .Include(t => t.Asignatura)
                 .ThenInclude(a => a.Periodo)
                 .Where(t => t.Asignatura.Periodo.UsuarioId == usuarioId)
+                .OrderByDescending(t => t.FechaCreacion)
                 .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task<(List<Tarea> Items, int TotalItems)> GetTareasByUsuarioIdPagedAsync(int usuarioId, int page, int pageSize)
+        {
+            var query = context.Tareas
+                .Include(t => t.Asignatura)
+                .ThenInclude(a => a.Periodo)
+                .Where(t => t.Asignatura.Periodo.UsuarioId == usuarioId)
+                .OrderByDescending(t => t.FechaCreacion)
+                .AsNoTracking();
+
+            var totalItems = await query.CountAsync();
+
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalItems);
         }
 
         public async Task<List<Tarea>> GetTareasByAsignaturaIdAsync(int asignaturaId)

@@ -29,6 +29,22 @@ namespace BackEnd.EndPoints
                 return tarea is null ? Results.NotFound() : Results.Ok(tarea);
             });
 
+            group.MapGet("/usuario/{usuarioId:int}/paged", async (int usuarioId, int? page, int? pageSize, ITareaService service, AuthorizationService authService, HttpContext context) =>
+            {
+                var authenticatedUserId = authService.GetAuthenticatedUserId(context.User);
+                
+                // El usuario solo puede ver sus propias tareas
+                if (authenticatedUserId != usuarioId)
+                    return Results.Forbid();
+
+                var pagedTareas = await service.GetTareasByUsuarioIdPagedAsync(
+                    usuarioId,
+                    page.GetValueOrDefault(1),
+                    pageSize.GetValueOrDefault(10));
+
+                return Results.Ok(pagedTareas);
+            });
+
             group.MapGet("/usuario/{usuarioId:int}", async (int usuarioId, ITareaService service, AuthorizationService authService, HttpContext context) =>
             {
                 var authenticatedUserId = authService.GetAuthenticatedUserId(context.User);

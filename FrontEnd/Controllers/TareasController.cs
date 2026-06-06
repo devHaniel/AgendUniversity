@@ -30,23 +30,25 @@ namespace FrontEnd.Controllers
             _asignaturaService = asignaturaService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
+            if (page < 1)
+                page = 1;
+
+            if (pageSize < 1)
+                pageSize = 10;
+
             var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
             _logger.LogInformation($"Obteniendo tareas para usuario ID: {userId}");
-            var tareas = await _tareaService.GetTareasByUsuario(userId);
+            var result = await _tareaService.GetTareasByUsuarioPaged(userId, page, pageSize);
 
-            foreach (var tarea in tareas)
+            foreach (var tarea in result.Items)
             {
                 tarea.Asignatura = await _asignaturaService
                     .GetAsignaturaByIdAsync(tarea.AsignaturaId);
             }
 
-            var ordenados = tareas
-                .OrderByDescending(t => t.FechaCreacion)
-                .ToList();
-
-            return View(ordenados);
+            return View(result);
         }
 
         public async Task<IActionResult> Details(Guid id)

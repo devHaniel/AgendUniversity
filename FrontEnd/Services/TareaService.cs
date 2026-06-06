@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using BackEnd.Dtos;
 using FrontEnd.Helpers;
+using FrontEnd.Models;
 using FrontEnd.Models.Tarea;
 using FrontEnd.Services.Interfaces;
 
@@ -59,6 +60,58 @@ namespace FrontEnd.Services
             }
 
             return await response.Content.ReadFromJsonAsync<List<Tarea>>();
+        }
+
+        public async Task<PagedResult<Tarea>> GetTareasByUsuarioPaged(int usuarioId, int page, int pageSize)
+        {
+            if (page < 1)
+                page = 1;
+
+            if (pageSize < 1)
+                pageSize = 10;
+
+            var client = _httpClientFactory.CreateClient("BackEndApi");
+
+            var httpContext = _httpContextAccessor?.HttpContext;
+            if (httpContext == null)
+            {
+                _logger.LogError("HttpContext es nulo en TareaService");
+                return new PagedResult<Tarea>
+                {
+                    Page = page,
+                    PageSize = pageSize
+                };
+            }
+
+            var token = TokenHelper.ObtenerToken(httpContext);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+                _logger.LogInformation($"Header Authorization establecido con token");
+            }
+            else
+            {
+                _logger.LogWarning("Token está vacío o nulo");
+            }
+
+            _logger.LogInformation($"Enviando solicitud GET a api/tareas/usuario/{usuarioId}/paged?page={page}&pageSize={pageSize}");
+            var response = await client.GetAsync($"api/tareas/usuario/{usuarioId}/paged?page={page}&pageSize={pageSize}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Status: {response.StatusCode}");
+                _logger.LogError($"Error API: {error}");
+                return new PagedResult<Tarea>
+                {
+                    Page = page,
+                    PageSize = pageSize
+                };
+            }
+
+            return await response.Content.ReadFromJsonAsync<PagedResult<Tarea>>() ?? new PagedResult<Tarea>();
         }
 
         public async Task<List<Tarea>> GetTareasByAsignatura(int asignaturaId)

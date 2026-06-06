@@ -1,142 +1,166 @@
 @using FrontEnd.Enums
-@model List<FrontEnd.Models.Tarea.Tarea>
+@model FrontEnd.Models.PagedResult<FrontEnd.Models.Tarea.Tarea>
 
 @{
     ViewData["Title"] = "Tareas";
+    var currentPage = Model.Page < 1 ? 1 : Model.Page;
+    var totalPages = Model.TotalPages < 1 ? 1 : Model.TotalPages;
+    var hasPreviousPage = currentPage > 1;
+    var hasNextPage = currentPage < totalPages;
 
     string ClaseEstado(int estado) => estado switch
     {
-        (int)TareaEnum.Faltante => "text-bg-warning text-dark",
-        (int)TareaEnum.Pendiente => "text-bg-info",
-        (int)TareaEnum.Entregado => "text-bg-success",
+        (int)AsignaturaEnum.Aprobada => "text-bg-success",
+        (int)AsignaturaEnum.Reprobada => "text-bg-danger",
+        (int)AsignaturaEnum.Cursando => "text-bg-warning text-dark",
         _ => "text-bg-secondary"
     };
 }
 
-<div class="container-fluid">
-    <div class="row mb-4 mt-3">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>
-                    <i class="bi bi-check-circle"></i>
-                    Mis Tareas
-                </h1>
-                <a asp-action="Create" 
-                   asp-route-returnUrl="@Url.Action("Index", "Tareas")"
-                   class="btn btn-primary">
-                    <i class="bi bi-plus-lg"></i>
-                    Nueva Tarea
-                </a>
-            </div>
+<h1>Tareas</h1>
+
+<hr />
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <a asp-action="Create" 
+           asp-route-returnUrl="@Url.Action("Index", "Tareas", new { page = currentPage, pageSize = Model.PageSize })"
+           class="btn btn-primary">
+            Nueva Tarea
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <i class="bi bi-check2-square"></i>
+            Listado de Tareas
+        </div>
+
+        <div>
+            <span class="badge text-bg-primary">
+                N° @Model.TotalItems
+            </span>
         </div>
     </div>
 
-    @if (Model.Any())
-    {
-        <div class="card">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr class="table-light">
-                                <th>Título</th>
-                                <th>Asignatura</th>
-                                <th>Estado</th>
-                                <th>Fecha Entrega</th>
-                                <th>Nota / Calificación</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var tarea in Model)
-                            {
-                                var diasRestantes = (tarea.FechaEntrega - DateTime.Now).Days;
-                                var rowClass = diasRestantes < 0 ? "table-danger" : diasRestantes <= 3 ? "table-warning" : "";
-                                
-                                <tr class="@rowClass">
-                                    <td>
-                                        <a asp-action="Details" asp-route-id="@tarea.Id" class="link-primary fw-bold">
-                                            @tarea.Titulo
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Asignatura</th>
+                        <th>Estado</th>
+                        <th>Fecha Creación</th>
+                        <th>Fecha Entrega</th>
+                        <th>Calificación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Any())
+                    {
+                        @foreach (var tarea in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@tarea.Id" class="link-primary fw-bold">
+                                        @tarea.Titulo
+                                    </a>
+                                </td>
+                                <td>
+                                    @if (tarea.Asignatura != null)
+                                    {
+                                        <a asp-controller="Asignaturas" asp-action="Details" asp-route-asignaturaId="@tarea.Asignatura.Id" class="link-secondary">
+                                            @tarea.Asignatura.Nombre
                                         </a>
-                                    </td>
-                                    <td>
-                                        @if (tarea.Asignatura != null)
-                                        {
-                                            <a asp-controller="Asignaturas" asp-action="Details" asp-route-id="@tarea.Asignatura.Id" class="link-secondary">
-                                                @tarea.Asignatura.Nombre
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">Sin asignar</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <span class="badge @ClaseEstado(tarea.Estado)">
-                                            @(((TareaEnum)tarea.Estado).ToString())
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="@(diasRestantes < 0 ? "text-danger fw-bold" : "")">
-                                            @tarea.FechaEntrega.ToString("dd/MM/yyyy")
-                                            @if (diasRestantes < 0)
-                                            {
-                                                <span class="badge bg-danger ms-1">Vencida</span>
-                                            }
-                                            else if (diasRestantes <= 3)
-                                            {
-                                                <span class="badge bg-warning text-dark ms-1">Próxima</span>
-                                            }
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if (tarea.Nota > 0)
-                                        {
-                                            <span class="@(tarea.Nota >= tarea.Calificacion * 0.6m ? "text-success" : "text-danger")">
-                                                @tarea.Nota / @tarea.Calificacion
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">-</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <a asp-action="Details" asp-route-id="@tarea.Id" class="btn btn-outline-info" title="Ver detalles">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a asp-action="Edit" asp-route-id="@tarea.Id" class="btn btn-outline-primary" title="Editar">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteModal" data-id="@tarea.Id" data-nombre="@tarea.Titulo"
-                                                    title="Eliminar">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin asignar</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge @ClaseEstado(tarea.Estado)">
+                                        @(((TareaEnum)tarea.Estado).ToString())
+                                    </span>
+                                </td>
+                                <td>@tarea.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                                <td>@tarea.FechaEntrega.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (tarea.Nota > 0)
+                                    {
+                                        <span>@tarea.Nota / @tarea.Calificacion</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Edit"
+                                       asp-route-id="@tarea.Id"
+                                       asp-route-returnUrl="@Url.Action("Index", "Tareas", new { page = currentPage, pageSize = Model.PageSize })"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-pencil"></i>
+                                        Editar
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal" data-id="@tarea.Id" data-nombre="@tarea.Titulo">
+                                        <i class="bi bi-trash"></i>
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">No hay tareas disponibles.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    }
-    else
-    {
-        <div class="alert alert-info text-center" role="alert">
-            <i class="bi bi-info-circle"></i>
-            <strong>No hay tareas disponibles.</strong>
-            <p>Crea tu primera tarea para comenzar a organizarte.</p>
-            <a asp-action="Create" class="btn btn-primary btn-sm">
-                <i class="bi bi-plus-lg"></i>
-                Nueva Tarea
-            </a>
-        </div>
-    }
+    </div>
 </div>
+
+<nav class="mt-3" aria-label="Paginación de tareas">
+    <ul class="pagination justify-content-center">
+        <li class="page-item @(!hasPreviousPage ? "disabled" : "")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-page="@(currentPage - 1)"
+               asp-route-pageSize="@Model.PageSize">
+                Anterior
+            </a>
+        </li>
+
+        @for (var pageNumber = 1; pageNumber <= totalPages; pageNumber++)
+        {
+            <li class="page-item @(pageNumber == currentPage ? "active" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@pageNumber"
+                   asp-route-pageSize="@Model.PageSize">
+                    @pageNumber
+                </a>
+            </li>
+        }
+
+        <li class="page-item @(!hasNextPage ? "disabled" : "")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-page="@(currentPage + 1)"
+               asp-route-pageSize="@Model.PageSize">
+                Siguiente
+            </a>
+        </li>
+    </ul>
+</nav>
 
 <!-- Modal de Confirmación de Eliminación -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -153,6 +177,8 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <form method="post" asp-action="Delete" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Tareas", new { page = currentPage, pageSize = Model.PageSize })" />
                     <input type="hidden" id="deleteId" name="id" />
                     <button type="submit" class="btn btn-danger">
                         <i class="bi bi-trash"></i>

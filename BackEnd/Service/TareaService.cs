@@ -49,6 +49,45 @@ namespace BackEnd.Service
             return mapper.Map<List<TareaDto>>(tareas);
         }
 
+        public async Task<PagedResult<TareaDto>> GetTareasByUsuarioIdPagedAsync(int usuarioId, int page, int pageSize)
+        {
+            if (usuarioId <= 0)
+            {
+                return new PagedResult<TareaDto>
+                {
+                    Page = 1,
+                    PageSize = 10
+                };
+            }
+
+            if (page < 1)
+                page = 1;
+
+            if (pageSize < 1)
+                pageSize = 10;
+
+            if (pageSize > 100)
+                pageSize = 100;
+
+            var (items, totalItems) = await repository.GetTareasByUsuarioIdPagedAsync(usuarioId, page, pageSize);
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            if (totalPages > 0 && page > totalPages)
+            {
+                page = totalPages;
+                (items, totalItems) = await repository.GetTareasByUsuarioIdPagedAsync(usuarioId, page, pageSize);
+            }
+
+            return new PagedResult<TareaDto>
+            {
+                Items = mapper.Map<List<TareaDto>>(items),
+                Page = page,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = totalPages
+            };
+        }
+
         public async Task<List<TareaDto>> GetTareasByAsignaturaIdAsync(int asignaturaId)
         {
             if (asignaturaId <= 0)

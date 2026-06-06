@@ -10,6 +10,7 @@ namespace BackEnd.Repository.Interfaces
         Task<List<Tarea>> GetTareasAsync();
         Task<Tarea> GetTareaByIdAsync(Guid id);
         Task<List<Tarea>> GetTareasByUsuarioIdAsync(int usuarioId);
+        Task<(List<Tarea> Items, int TotalItems)> GetTareasByUsuarioIdPagedAsync(int usuarioId, int page, int pageSize);
         Task<List<Tarea>> GetTareasByAsignaturaIdAsync(int asignaturaId);
         Task CreateAsync(Tarea tarea);
         void EditAsync(Tarea tarea);
