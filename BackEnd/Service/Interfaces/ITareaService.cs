@@ -1,5 +1,6 @@
 using BackEnd.Dtos;
 using BackEnd.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,5 +17,8 @@ namespace BackEnd.Service.Interfaces
         Task<TareaDto> CreateAsync(TareaCreateDto dto);
         Task UpdateAsync(Guid id, TareaUpdateDto dto);
         Task DeleteAsync(Guid id);
+        Task<TareaArchivoDto> SubirArchivoAsync(Guid tareaId, IFormFile archivo);
+        Task<TareaArchivoDownloadDto> GetArchivoParaDescargaAsync(int archivoId);
+        Task<bool> DeleteArchivoAsync(int archivoId);
     }
 }

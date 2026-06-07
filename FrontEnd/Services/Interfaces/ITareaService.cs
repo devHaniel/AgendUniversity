@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BackEnd.Dtos;
 using FrontEnd.Models;
 using FrontEnd.Models.Tarea;
+using Microsoft.AspNetCore.Http;
 
 namespace FrontEnd.Services.Interfaces
 {
@@ -17,5 +18,8 @@ namespace FrontEnd.Services.Interfaces
         Task<FrontEnd.Models.Tarea.Tarea> CreateTareaAsync(TareaCreateDto nuevaTarea);
         Task<bool> EditTareaAsync(Guid tareaId, TareaUpdateDto tareaActualizada);
         Task<bool> DeleteTareaAsync(Guid tareaId);
+        Task<bool> SubirArchivoAsync(Guid tareaId, IFormFile archivo);
+        Task<TareaArchivoDownload> DescargarArchivoAsync(int archivoId);
+        Task<bool> EliminarArchivoAsync(int archivoId);
     }
 }

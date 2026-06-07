@@ -1,0 +1,63 @@
+@using FrontEnd.Models.Recordatorio
+@model List<Recordatorio>
+
+@{
+    ViewData["Title"] = "Recordatorios";
+}
+
+<h1>Tablero de Recordatorios</h1>
+
+<hr />
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <a asp-action="Create" 
+           class="btn btn-primary">
+            Nuevo recordatorio
+        </a>
+       
+    </div>
+</div>
+
+<div class="tablon">
+
+    <div class="notas-grid">
+        @if(!Model.Any())
+        {
+            <div class="nota">
+
+                <div class="nota-contenido">
+                    <h2>Sin recordatorios :)</h2>
+                </div>
+                
+            </div>
+        }
+        else
+        {
+            @foreach (var recordatorio in Model)
+            {
+                <div class="nota">
+
+                <div class="nota-titulo">
+                    @recordatorio.Titulo
+                </div>
+
+                <div class="nota-contenido">
+                    @recordatorio.Descripcion
+                </div>
+
+                <div class="nota-footer">
+
+                    <span class="nota-fecha">
+                        @recordatorio.FechaCreacion.ToString("dd/MM/yyyy")
+                    </span>
+
+                </div>
+
+            </div>
+            }
+        }
+    </div>
+
+</div>
+

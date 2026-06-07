@@ -13,6 +13,7 @@ using FrontEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using FrontEnd.Models.Recordatorio;
 
 namespace FrontEnd.Controllers
 {
@@ -23,16 +24,19 @@ namespace FrontEnd.Controllers
         private readonly IPeriodoService _periodoService;
         private readonly ITareaService _tareaService;
         private readonly IAsignaturasService _asignaturaService;
+        private readonly IRecordatoriosService _recordatorioService;
 
         public DashboardController(ILogger<DashboardController> logger,
                                 IPeriodoService periodoService,
                                 ITareaService tareaService,
-                                IAsignaturasService asignaturasService)
+                                IAsignaturasService asignaturasService,
+                                IRecordatoriosService recordatorioService)
         {
             _logger = logger;
             _periodoService = periodoService;
             _tareaService = tareaService;
             _asignaturaService = asignaturasService;
+            _recordatorioService = recordatorioService;
         }
 
         public async Task<IActionResult> Index()
@@ -66,11 +70,14 @@ namespace FrontEnd.Controllers
         .OrderBy(t => t.FechaEntrega)
         .ToList();
 
+            var recordatorios = await _recordatorioService.GetRecordatoriosByUsuarioIdAsync(userId);
+
             _logger.LogInformation($"Valor entero enum periodo: {(int)TareaEnum.Pendiente}");
 
             modelo.Periodo = periodoActual;
             modelo.Asignaturas = periodoActual?.Asignaturas ?? new List<FrontEnd.Models.Asignatura.Asignatura>();
             modelo.Tareas = tareasPendientes;
+            modelo.Recordatorios = recordatorios;
 
             return View(modelo);
         }

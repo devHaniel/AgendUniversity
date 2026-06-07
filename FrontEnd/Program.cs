@@ -49,6 +49,7 @@ builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 builder.Services.AddScoped<IPeriodoService, PeriodoService>();
 builder.Services.AddScoped<IAsignaturasService, AsignaturasService>();
 builder.Services.AddScoped<ITareaService, TareaService>();
+builder.Services.AddScoped<IRecordatoriosService, RecordatorioService>();
 
 var app = builder.Build();
 

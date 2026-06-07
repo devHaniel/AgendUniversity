@@ -19,6 +19,12 @@ namespace BackEnd.Mapper
             CreateMap<Tarea, TareaDto>();
             CreateMap<TareaCreateDto, Tarea>();
             CreateMap<TareaUpdateDto, Tarea>();
+            CreateMap<TareaArchivo, TareaArchivoDto>();
+            CreateMap<Recordatorio, RecordatorioDto>();
+
+            CreateMap<RecordatorioCreateDto, Recordatorio>();
+
+            CreateMap<RecordatorioUpdateDto, Recordatorio>();
         }
     }
 }

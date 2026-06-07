@@ -221,6 +221,53 @@ namespace FrontEnd.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubirArchivo(Guid id, IFormFile archivo)
+        {
+            var tarea = await _tareaService.GetTareasById(id);
+
+            if (tarea == null)
+                return NotFound();
+
+            if (archivo == null || archivo.Length == 0)
+            {
+                TempData["Error"] = "Debe seleccionar un archivo.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var success = await _tareaService.SubirArchivoAsync(id, archivo);
+
+            TempData[success ? "Success" : "Error"] = success
+                ? "Archivo subido correctamente."
+                : "Error al subir el archivo.";
+
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        public async Task<IActionResult> DescargarArchivo(int id)
+        {
+            var archivo = await _tareaService.DescargarArchivoAsync(id);
+
+            if (archivo == null)
+                return NotFound();
+
+            return File(archivo.Contenido, archivo.ContentType, archivo.NombreOriginal);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarArchivo(int id, Guid tareaId)
+        {
+            var success = await _tareaService.EliminarArchivoAsync(id);
+
+            TempData[success ? "Success" : "Error"] = success
+                ? "Archivo eliminado correctamente."
+                : "Error al eliminar el archivo.";
+
+            return RedirectToAction(nameof(Details), new { id = tareaId });
+        }
+
         private async Task CargarListasTarea<T>(T modelo) where T : class
         {
             var userId = int.Parse(User.Claims

@@ -64,8 +64,10 @@ builder.Services.AddAutoMapper(cfg =>
 // Repositories
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ITareaRepository, TareaRepository>();
+builder.Services.AddScoped<ITareaArchivoRepository, TareaArchivoRepository>();
 builder.Services.AddScoped<IAsignaturaRepository, AsignaturaRepository>();
 builder.Services.AddScoped<IPeriodoRepository, PeriodoRepository>();
+builder.Services.AddScoped<IRecordatorioRepository, RecordatorioRepository>();
 
 // Services
 builder.Services.AddScoped<JwtService>();
@@ -74,6 +76,7 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ITareaService, TareaService>();
 builder.Services.AddScoped<IAsignaturaService, AsignaturaService>();
 builder.Services.AddScoped<IPeriodoService, PeriodoService>();
+builder.Services.AddScoped<IRecordatorioService, RecordatorioService>();
 builder.Services.AddScoped<AuthorizationService>();
 
 // Autenticacion
@@ -116,6 +119,7 @@ app.MapUsuarioEndpoints();
 app.MapPeriodoEndpoints();
 app.MapAsignaturaEndpoints();
 app.MapTareaEndpoints();
+app.MapRecordatorioEndpoints();
 app.MapScalarApiReference();
 
 

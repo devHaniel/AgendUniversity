@@ -29,6 +29,51 @@ namespace BackEnd.EndPoints
                 return tarea is null ? Results.NotFound() : Results.Ok(tarea);
             });
 
+            var uploadArchivo = group.MapPost("/{id:guid}/archivos", async (Guid id, IFormFile archivo, ITareaService service, AuthorizationService authService, HttpContext context) =>
+            {
+                var authenticatedUserId = authService.GetAuthenticatedUserId(context.User);
+
+                if (!await authService.IsUserTareaOwnerAsync(id, authenticatedUserId))
+                    return Results.Forbid();
+
+                if (archivo is null || archivo.Length == 0)
+                    return Results.BadRequest("Debe seleccionar un archivo.");
+
+                var archivoSubido = await service.SubirArchivoAsync(id, archivo);
+                return Results.Ok(archivoSubido);
+            });
+
+            uploadArchivo.DisableAntiforgery();
+
+            group.MapGet("/archivos/{archivoId:int}/download", async (int archivoId, ITareaService service, AuthorizationService authService, HttpContext context) =>
+            {
+                var archivo = await service.GetArchivoParaDescargaAsync(archivoId);
+                if (archivo is null)
+                    return Results.NotFound();
+
+                var authenticatedUserId = authService.GetAuthenticatedUserId(context.User);
+
+                if (!await authService.IsUserTareaOwnerAsync(archivo.TareaId, authenticatedUserId))
+                    return Results.Forbid();
+
+                return Results.File(archivo.RutaArchivo, archivo.ContentType, archivo.NombreOriginal);
+            });
+
+            group.MapDelete("/archivos/{archivoId:int}", async (int archivoId, ITareaService service, AuthorizationService authService, HttpContext context) =>
+            {
+                var archivo = await service.GetArchivoParaDescargaAsync(archivoId);
+                if (archivo is null)
+                    return Results.NotFound();
+
+                var authenticatedUserId = authService.GetAuthenticatedUserId(context.User);
+
+                if (!await authService.IsUserTareaOwnerAsync(archivo.TareaId, authenticatedUserId))
+                    return Results.Forbid();
+
+                var resultado = await service.DeleteArchivoAsync(archivoId);
+                return resultado ? Results.NoContent() : Results.BadRequest("Error al eliminar el archivo");
+            });
+
             group.MapGet("/usuario/{usuarioId:int}/paged", async (int usuarioId, int? page, int? pageSize, ITareaService service, AuthorizationService authService, HttpContext context) =>
             {
                 var authenticatedUserId = authService.GetAuthenticatedUserId(context.User);

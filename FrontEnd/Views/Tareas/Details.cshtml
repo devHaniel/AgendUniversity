@@ -16,6 +16,17 @@
     string claseFecha = diasRestantes < 0 ? "text-danger" : 
                         diasRestantes == 0 ? "text-warning" : 
                         diasRestantes <= 3 ? "text-warning" : "text-success";
+
+    string TamanoArchivo(long bytes)
+    {
+        if (bytes >= 1024 * 1024)
+            return $"{bytes / 1024m / 1024m:0.##} MB";
+
+        if (bytes >= 1024)
+            return $"{bytes / 1024m:0.##} KB";
+
+        return $"{bytes} B";
+    }
 }
 
 <div class="container mt-4">
@@ -70,7 +81,7 @@
                                 <p class="fw-bold">
                                     @if (Model.Asignatura != null)
                                     {
-                                        <a asp-controller="Asignaturas" asp-action="Details" asp-route-id="@Model.Asignatura.Id" class="link-primary">
+                                        <a asp-controller="Asignaturas" asp-action="Details" asp-route-asignaturaId="@Model.Asignatura.Id" class="link-primary">
                                             @Model.Asignatura.Nombre
                                         </a>
                                     }
@@ -173,6 +184,25 @@
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-header">
+                    <i class="bi bi-paperclip"></i>
+                    Subir Archivo
+                </div>
+                <div class="card-body">
+                    <form asp-action="SubirArchivo" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <input type="file" name="archivo" class="form-control" />
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-upload"></i>
+                            Subir
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
                     <i class="bi bi-info-circle"></i>
                     Información Rápida
                 </div>
@@ -211,6 +241,73 @@
                         </p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-folder2-open"></i>
+                Archivos
+            </div>
+            <span class="badge text-bg-primary">
+                N° @(Model.Archivos?.Count ?? 0)
+            </span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Tamaño</th>
+                            <th>Fecha Subida</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Archivos != null && Model.Archivos.Any())
+                        {
+                            @foreach (var archivo in Model.Archivos)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@archivo.NombreOriginal</td>
+                                    <td>@archivo.ContentType</td>
+                                    <td>@TamanoArchivo(archivo.TamanoBytes)</td>
+                                    <td>@archivo.FechaSubida.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        <a asp-action="DescargarArchivo"
+                                           asp-route-id="@archivo.Id"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-download"></i>
+                                            Descargar
+                                        </a>
+                                        <form asp-action="EliminarArchivo" 
+                                              asp-route-id="@archivo.Id"
+                                              asp-route-tareaId="@Model.Id"
+                                              method="post" 
+                                              style="display:inline;"
+                                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar este archivo?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">No hay archivos subidos.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

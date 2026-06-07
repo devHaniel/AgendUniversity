@@ -8,6 +8,7 @@ using FrontEnd.Helpers;
 using FrontEnd.Models;
 using FrontEnd.Models.Tarea;
 using FrontEnd.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace FrontEnd.Services
 {
@@ -287,6 +288,131 @@ namespace FrontEnd.Services
             }
             
             var response = await client.DeleteAsync($"api/tareas/{tareaId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Status: {response.StatusCode}");
+                _logger.LogError($"Error API: {error}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> SubirArchivoAsync(Guid tareaId, IFormFile archivo)
+        {
+            if (archivo == null || archivo.Length == 0)
+                return false;
+
+            var client = _httpClientFactory.CreateClient("BackEndApi");
+
+            var httpContext = _httpContextAccessor?.HttpContext;
+            if (httpContext == null)
+            {
+                _logger.LogError("HttpContext es nulo en TareaService");
+                return false;
+            }
+
+            var token = TokenHelper.ObtenerToken(httpContext);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            await using var stream = archivo.OpenReadStream();
+            using var content = new MultipartFormDataContent();
+            using var fileContent = new StreamContent(stream);
+
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(
+                string.IsNullOrWhiteSpace(archivo.ContentType)
+                    ? "application/octet-stream"
+                    : archivo.ContentType);
+
+            content.Add(fileContent, "archivo", archivo.FileName);
+
+            var response = await client.PostAsync($"api/tareas/{tareaId}/archivos", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Status: {response.StatusCode}");
+                _logger.LogError($"Error API: {error}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<TareaArchivoDownload> DescargarArchivoAsync(int archivoId)
+        {
+            var client = _httpClientFactory.CreateClient("BackEndApi");
+
+            var httpContext = _httpContextAccessor?.HttpContext;
+            if (httpContext == null)
+            {
+                _logger.LogError("HttpContext es nulo en TareaService");
+                return null;
+            }
+
+            var token = TokenHelper.ObtenerToken(httpContext);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await client.GetAsync($"api/tareas/archivos/{archivoId}/download");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Status: {response.StatusCode}");
+                _logger.LogError($"Error API: {error}");
+                return null;
+            }
+
+            var nombreOriginal = "archivo";
+            var contentDisposition = response.Content.Headers.ContentDisposition;
+
+            if (contentDisposition != null)
+            {
+                nombreOriginal = contentDisposition.FileNameStar
+                    ?? contentDisposition.FileName?.Trim('"')
+                    ?? nombreOriginal;
+            }
+
+            return new TareaArchivoDownload
+            {
+                Contenido = await response.Content.ReadAsByteArrayAsync(),
+                ContentType = response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream",
+                NombreOriginal = nombreOriginal
+            };
+        }
+
+        public async Task<bool> EliminarArchivoAsync(int archivoId)
+        {
+            var client = _httpClientFactory.CreateClient("BackEndApi");
+
+            var httpContext = _httpContextAccessor?.HttpContext;
+            if (httpContext == null)
+            {
+                _logger.LogError("HttpContext es nulo en TareaService");
+                return false;
+            }
+
+            var token = TokenHelper.ObtenerToken(httpContext);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await client.DeleteAsync($"api/tareas/archivos/{archivoId}");
 
             if (!response.IsSuccessStatusCode)
             {

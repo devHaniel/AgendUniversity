@@ -14,5 +14,6 @@ namespace FrontEnd.Models.Tarea
         public decimal Nota { get; set; }
         public decimal Calificacion { get; set; }
         public Asignatura.Asignatura Asignatura { get; set; }
+        public List<TareaArchivo> Archivos { get; set; } = new();
     }
 }

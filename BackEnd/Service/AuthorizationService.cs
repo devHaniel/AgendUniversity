@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using BackEnd.Repository;
 using BackEnd.Repository.Interfaces;
 
 namespace BackEnd.Service
@@ -8,15 +9,18 @@ namespace BackEnd.Service
         private readonly IAsignaturaRepository asignaturaRepository;
         private readonly ITareaRepository tareaRepository;
         private readonly IPeriodoRepository periodoRepository;
+        private readonly IRecordatorioRepository recordatorioRepository;
 
         public AuthorizationService(
             IAsignaturaRepository asignaturaRepository,
             ITareaRepository tareaRepository,
-            IPeriodoRepository periodoRepository)
+            IPeriodoRepository periodoRepository,
+            IRecordatorioRepository recordatorioRepository)
         {
             this.asignaturaRepository = asignaturaRepository;
             this.tareaRepository = tareaRepository;
             this.periodoRepository = periodoRepository;
+            this.recordatorioRepository = recordatorioRepository;
         }
 
         /// <summary>
@@ -25,7 +29,7 @@ namespace BackEnd.Service
         public int GetAuthenticatedUserId(ClaimsPrincipal user)
         {
             var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-            
+
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
                 return -1;
 
@@ -63,6 +67,17 @@ namespace BackEnd.Service
                 return false;
 
             return await IsUserAsignaturaOwnerAsync(tarea.AsignaturaId, authenticatedUserId);
+        }
+
+        public async Task<bool> IsUserRecordatorioOwnerAsync(
+    int recordatorioId,
+    int userId)
+        {
+            var recordatorio =
+                await recordatorioRepository.GetRecordatorioByIdAsync(recordatorioId);
+
+            return recordatorio != null &&
+                   recordatorio.UsuarioId == userId;
         }
     }
 }

@@ -15,5 +15,6 @@ namespace BackEnd.Dtos
         public decimal Nota { get; set; }
         public decimal Calificacion { get; set; }
         public Asignatura asignatura;
+        public List<TareaArchivoDto> Archivos { get; set; } = new();
     }
 }

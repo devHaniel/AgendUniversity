@@ -1,0 +1,91 @@
+@{
+    ViewData["Title"] = "Calendario";
+}
+
+<h1 class="mb-4">
+    Calendario
+</h1>
+
+<hr />
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-3">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/fullcalender/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                locale: 'es',
+                height: 'auto',
+                contentHeight: 'auto',
+                events: function(info, successCallback, failureCallback) {
+                    // Aquí puedes cargar eventos de tu API
+                    fetch('/api/calendario/eventos')
+                        .then(response => response.json())
+                        .then(data => {
+                            successCallback(data);
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar eventos:', error);
+                            failureCallback(error);
+                        });
+                }
+            });
+            calendar.render();
+        });
+    </script>
+
+    <style>
+        #calendar {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .fc {
+            font-size: 0.95rem;
+        }
+
+        .fc .fc-button-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .fc .fc-button-primary:hover {
+            background-color: #0a58ca;
+            border-color: #0a58ca;
+        }
+
+        .fc .fc-button-primary.fc-button-active {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .fc-theme-standard .fc-col-header-cell {
+            background-color: #f8f9fa;
+        }
+
+        .fc .fc-daygrid-day-number {
+            padding: 6px 4px;
+        }
+
+        .fc .fc-daygrid-day {
+            min-height: 80px;
+        }
+
+        .fc .fc-event {
+            padding: 2px 4px;
+            font-size: 0.85rem;
+        }
+    </style>
+}

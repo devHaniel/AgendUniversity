@@ -32,6 +32,7 @@ namespace BackEnd.Repository
             return await context.Tareas
                 .Include(t => t.Asignatura)
                 .ThenInclude(a => a.Periodo)
+                .Include(t => t.Archivos)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Id == id);
         }

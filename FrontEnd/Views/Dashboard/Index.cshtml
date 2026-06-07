@@ -16,27 +16,54 @@
 
 <hr />
 
-<div class="card mb-4">
-    <div class="card-header">
-        <i class="bi bi-calendar-event"></i>
-        Periodo Actual
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-calendar-event"></i>
+                Periodo Actual
+            </div>
+            <div class="card-body">
+                @if (Model.Periodo != null)
+                {
+                    <H5> <a class="link-opacity-100" asp-controller="Periodos" asp-action="Details"
+                            asp-route-id="@Model.Periodo.Id">
+                        @Model.Periodo.Nombre
+                    </a>
+                </H5>
+                <p>Fecha Inicio: @Model.Periodo.FechaInicio.ToShortDateString()</p>
+                <p>Fecha Fin: @Model.Periodo.FechaFin.ToShortDateString()</p>
+            }
+                else
+            {
+                <p>No hay un periodo activo actualmente.</p>
+            }
+        </div>
+        </div>
     </div>
-    <div class="card-body">
-        @if (Model.Periodo != null)
-        {
-            <H5> <a class="link-opacity-100" asp-controller="Periodos" asp-action="Details"
-                    asp-route-id="@Model.Periodo.Id">
-                @Model.Periodo.Nombre
-            </a>
-        </H5>
-        <p>Fecha Inicio: @Model.Periodo.FechaInicio.ToShortDateString()</p>
-        <p>Fecha Fin: @Model.Periodo.FechaFin.ToShortDateString()</p>
-    }
-        else
-    {
-        <p>No hay un periodo activo actualmente.</p>
-    }
-</div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-bell"></i>
+                Recordatorios
+            </div>
+            <div class="card-body">
+                @if (Model.Recordatorios.Any())
+                {
+                    <H5 class="text-center">
+                        <span class="badge bg-primary">@Model.Recordatorios.Count</span>
+                    </H5>
+                    <p class="text-center text-muted">
+                        @(Model.Recordatorios.Count == 1 ? "recordatorio" : "recordatorios")
+                    </p>
+                }
+                else
+                {
+                    <p class="text-center">No hay recordatorios.</p>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 <h3>Asignaturas</h3>
@@ -48,7 +75,7 @@
         @foreach (var asignatura in Model.Asignaturas)
         {
 
-            <div class="col-md-4 d-flex">
+            <div class="col-md-3 d-flex">
                 <div class="card mb-4 w-100">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
