@@ -71,13 +71,15 @@ namespace FrontEnd.Controllers
         .ToList();
 
             var recordatorios = await _recordatorioService.GetRecordatoriosByUsuarioIdAsync(userId);
-
+            var recordatorios_activos = recordatorios
+                .Where(r => r.FechaRecordatorio >= DateTime.UtcNow )
+                .ToList();
             _logger.LogInformation($"Valor entero enum periodo: {(int)TareaEnum.Pendiente}");
 
             modelo.Periodo = periodoActual;
             modelo.Asignaturas = periodoActual?.Asignaturas ?? new List<FrontEnd.Models.Asignatura.Asignatura>();
             modelo.Tareas = tareasPendientes;
-            modelo.Recordatorios = recordatorios;
+            modelo.Recordatorios = recordatorios_activos;
 
             return View(modelo);
         }

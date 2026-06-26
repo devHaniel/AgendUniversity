@@ -11,53 +11,108 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <a asp-action="Create" 
-           class="btn btn-primary">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
             Nuevo recordatorio
-        </a>
-       
+        </button>
     </div>
 </div>
 
 <div class="tablon">
-
     <div class="notas-grid">
-        @if(!Model.Any())
+        @if (!Model.Any())
         {
             <div class="nota">
-
                 <div class="nota-contenido">
                     <h2>Sin recordatorios :)</h2>
                 </div>
-                
             </div>
         }
         else
         {
             @foreach (var recordatorio in Model)
             {
-                <div class="nota">
-
-                <div class="nota-titulo">
-                    @recordatorio.Titulo
-                </div>
-
-                <div class="nota-contenido">
-                    @recordatorio.Descripcion
-                </div>
-
-                <div class="nota-footer">
-
-                    <span class="nota-fecha">
-                        @recordatorio.FechaCreacion.ToString("dd/MM/yyyy")
-                    </span>
-
-                </div>
-
-            </div>
+                @if (DateTime.Now < recordatorio.FechaRecordatorio)
+                {
+                    <div class="nota">
+                        <div class="nota-titulo">
+                            @recordatorio.Titulo
+                        </div>
+                        <div class="nota-contenido">
+                            @recordatorio.Descripcion
+                        </div>
+                        <div class="nota-footer">
+                            <span class="nota-fecha">
+                                @recordatorio.FechaCreacion.ToString("dd/MM/yyyy")
+                            </span>
+                        </div>
+                    </div>
+                }
             }
         }
     </div>
-
 </div>
 
+<!-- Modal Crear Recordatorio -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Nuevo Recordatorio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <form asp-action="Create" asp-controller="Recordatorios" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="Titulo" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="Titulo" name="Titulo" maxlength="70" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="Descripcion" name="Descripcion" rows="3" maxlength="500"
+                                  required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="FechaRecordatorio" class="form-label">Fecha del recordatorio</label>
+                        <input type="datetime-local" class="form-control" id="FechaRecordatorio"
+                               name="FechaRecordatorio" required />
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Establece la fecha mínima del picker como "ahora"
+        const fechaInput = document.getElementById('FechaRecordatorio');
+        if (fechaInput) {
+            const now = new Date();
+            // formato requerido: YYYY-MM-DDTHH:MM
+            const pad = n => String(n).padStart(2, '0');
+            const minVal = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            fechaInput.min = minVal;
+        }
+
+        // Resetea el formulario al cerrar el modal
+        const createModal = document.getElementById('createModal');
+        createModal.addEventListener('hidden.bs.modal', function () {
+            createModal.querySelector('form').reset();
+        });
+    </script>
+}

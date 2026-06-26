@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using BackEnd.Dtos;
 using FrontEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,23 @@ namespace FrontEnd.Controllers
 
             return View(resultado);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(RecordatorioCreateDto dto)
+        {
+            var userId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0");
+            dto.UsuarioId = userId; // ← asignar antes de validar o llamar al servicio
+
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index)); // modal no tiene vista propia
+            }
+
+            await _recordatorioService.CreateRecordatorioAsync(dto);
+            return RedirectToAction(nameof(Index));
+
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
